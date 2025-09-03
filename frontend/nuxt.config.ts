@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  modules: ["@qirolab/nuxt-sanctum-authentication"],
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
@@ -11,6 +12,27 @@ export default defineNuxtConfig({
       ],
     },
   },
+
+  laravelSanctum: {
+    apiUrl: process.env.BACKEND_URL,  // Make sure this points to your backend URL
+    authMode: "cookie",  // Cookie-based authentication with Sanctum
+  },
+  
+
+  nitro: {
+    routeRules: {
+      '/api/**': {
+        cors: true,
+        proxy: process.env.BACKEND_URL + '/api/**',  // Ensure this points to your backend API
+      },
+      '/sanctum/csrf-cookie': {
+        cors: true,
+        proxy: process.env.BACKEND_URL + '/sanctum/csrf-cookie',  // Handle CSRF token request
+      },
+    },
+  },
+
+
 
 
 })
