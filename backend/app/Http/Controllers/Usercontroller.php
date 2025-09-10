@@ -25,12 +25,12 @@ class Usercontroller extends Controller
             'email' => ['required', 'email'],
             'password' => ['required']
         ]);
+        $ValidatedAttributes['password'] = bcrypt($ValidatedAttributes['password']);
+
 
         $user = User::create($ValidatedAttributes);
 
         Auth::login($user);
-
-        return redirect('/cars');
     }
 
 

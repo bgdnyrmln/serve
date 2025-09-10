@@ -7,22 +7,24 @@
 <script>
 import axios from 'axios';
 
+
 export default {
   data() {
     return {
       message: 'Loading...', 
     };
   },
-  mounted() {
-    axios.get('http://127.0.0.1:8000/api/users')
-      .then(response => {
-        console.log(response.data);
-        this.message = JSON.stringify(response.data); 
-      })
-      .catch(error => {
-        console.error(error);
-        this.message = 'Error fetching data';
-      });
-  },
+  
+
+async mounted() {
+  try {
+    const user = await useSanctumFetch('/api/user');
+    console.log(user);
+    this.message = `User fetched: ${JSON.stringify(user)}`;
+  } catch (error) {
+    console.error(error);
+    this.message = 'Error fetching user data';
+  }
+},
 };
 </script>

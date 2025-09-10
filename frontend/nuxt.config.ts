@@ -14,10 +14,26 @@ export default defineNuxtConfig({
   },
 
   laravelSanctum: {
-    apiUrl: process.env.BACKEND_URL,  // Make sure this points to your backend URL
+    apiUrl: "http://localhost:8000",  // Make sure this points to your backend URL
     authMode: "cookie",  // Cookie-based authentication with Sanctum
   },
+
+  runtimeConfig: {
+    public: {
+      axios: {
+        credentials: true // important to send cookies
+      }
+    }
+  },
   
+  routeRules: {
+    "/register": {
+      redirect: "/auth/register",
+    },
+    "/login": {
+      redirect: "/auth/login",
+    }
+  },
 
   nitro: {
     routeRules: {

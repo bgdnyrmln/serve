@@ -1,6 +1,4 @@
 <template style="background-color: black;">
-  <!-- Header component -->
-  <headerline/>
 
   <!-- Registration section -->
   <div class="register" style="height: 125vh;">
@@ -77,8 +75,6 @@
     </div>
   </div>
 
-  <!-- Footer component -->
-  <footerline/>
 </template>
 
 <script setup>
@@ -92,7 +88,7 @@ definePageMeta({
 
 onMounted(async () => {
   // Get CSRF token on page mount
-  await axios.get("/sanctum/csrf-cookie", {
+  await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
     withCredentials: true
   });
 });
@@ -120,15 +116,15 @@ const submitForm = async () => {
     );
 
     // Send POST request to register user
-    await axios.post("http://localhost:8000/api/user", form.value, {
+    await axios.post("http://localhost:8000/register", form.value, {
       withCredentials: true,
       headers: {
         "X-XSRF-TOKEN": token,
       },
     });
 
-    // Redirect to login page on success
-    router.push('/login');
+    // Redirect to main page on success
+    router.push('/');
   } catch (err) {
     // Handle validation or server errors
     console.error("Registration error:", err);
@@ -142,3 +138,8 @@ const submitForm = async () => {
   }
 };
 </script>
+
+
+
+
+

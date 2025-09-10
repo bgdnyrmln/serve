@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 
 Route::get('/users', [UserController::class, 'index']);
-Route::put('/users/{user}', [Usercontroller::class, 'update']) -> middleware('auth:sanctum');
 
 Route::get('/user', function (Request $request) {
     return response()->json(
