@@ -3,34 +3,8 @@
     class="flex flex-col items-center justify-center min-h-screen bg-gray-100"
   >
     <div class="w-full max-w-md p-8 space-y-3 bg-white shadow-lg rounded-xl">
-      <h1 class="text-2xl font-bold text-center">Register</h1>
+      <h1 class="text-2xl font-bold text-center">Login</h1>
       <form @submit.prevent="submitForm">
-        <div class="flex flex-col space-y-1">
-          <label for="first_name" class="text-sm font-medium">First Name</label>
-          <input
-            id="first_name"
-            type="text"
-            v-model="form.first_name"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-            :class="{ 'border-red-600': error.first_name }"
-          />
-          <span v-if="error.first_name" class="text-sm text-red-600">
-            {{ error.first_name[0] }}
-          </span>
-        </div>
-        <div class="flex flex-col space-y-1">
-          <label for="last_name" class="text-sm font-medium">Last Name</label>
-          <input
-            id="last_name"
-            type="text"
-            v-model="form.last_name"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-            :class="{ 'border-red-600': error.last_name }"
-          />
-          <span v-if="error.last_name" class="text-sm text-red-600">
-            {{ error.last_name[0] }}
-          </span>
-        </div>
         <div class="flex flex-col mt-3 space-y-1">
           <label for="email" class="text-sm font-medium">Email</label>
           <input
@@ -66,13 +40,12 @@
           type="submit"
           class="w-full px-4 py-2 mt-3 text-sm font-medium text-white bg-blue-500 rounded-md"
         >
-          Register
+          Login
         </button>
       </form>
     </div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -93,15 +66,13 @@ onMounted(async () => {
 const router = useRouter();
 
 const form = ref({
-  first_name: "",
-  last_name: "",
   email: "",
   password: "",
 });
 
 const error = ref({});
 
-// Handles form submission
+// Handles login form submission
 const submitForm = async () => {
   try {
     // Retrieve CSRF token from cookies
@@ -112,8 +83,8 @@ const submitForm = async () => {
         ?.split("=")[1] ?? ""
     );
 
-    // Send POST request to register user
-    await axios.post("http://localhost:8000/register", form.value, {
+    // Send POST request to login user
+    await axios.post("http://localhost:8000/login", form.value, {
       withCredentials: true,
       headers: {
         "X-XSRF-TOKEN": token,
@@ -124,7 +95,7 @@ const submitForm = async () => {
     router.push('/');
   } catch (err) {
     // Handle validation or server errors
-    console.error("Registration error:", err);
+    console.error("Login error:", err);
     if (err.response?.data?.errors) {
       error.value = err.response.data.errors;
     } else if (err.response?.data?.message) {
@@ -135,8 +106,3 @@ const submitForm = async () => {
   }
 };
 </script>
-
-
-
-
-
