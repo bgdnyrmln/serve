@@ -13,5 +13,6 @@ Route::get('/user', function (Request $request) {
             'first_name' => $request->user()->first_name,
             'last_name' => $request->user()->last_name,
             'email' => $request->user()->email,
+            'role' => $request->user()->role,
         ]);
     })->middleware('auth:sanctum');
