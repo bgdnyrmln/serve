@@ -1,4 +1,5 @@
 <template>
+<<<<<<< Updated upstream
   <div>
     <h1>{{ message }}</h1>
   </div>
@@ -27,4 +28,11 @@ async mounted() {
   }
 },
 };
+=======
+  <p>Welcome to the homepage!</p>
+</template>
+
+<script setup>
+
+>>>>>>> Stashed changes
 </script>

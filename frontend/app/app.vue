@@ -1,3 +1,6 @@
 <template>
-  <NuxtPage />
+  <Header />
+  <NuxtPage class="pt-24" />
+  <Footer />
 </template>
+
