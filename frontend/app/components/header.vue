@@ -34,6 +34,7 @@
       <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/">Home</a>
       <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/about">About us</a>
       <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/contacts">Contact</a>
+      <a v-if="isAdmin" href="/admin" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600">Admin</a>
     </div>
 
     <!-- Right: Auth links + Theme switch -->
@@ -91,6 +92,7 @@
           class="block w-full text-center text-white bg-indigo-600 px-4 py-2 rounded-md shadow-sm hover:opacity-95"
           >Logout</a
         >
+        
       </div>
     </div>
   </nav>
@@ -100,6 +102,7 @@
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 const message = ref('Loading...');
+var isAdmin = ref(false);
 
 onMounted(() => {
   axios.get('http://localhost:8000/sanctum/csrf-cookie', {
@@ -110,6 +113,9 @@ onMounted(() => {
     try {
       const user = await useSanctumFetch('/api/user');
       console.log(user);
+        if (user.role === 'admin') {
+            isAdmin.value = true;
+        }
       message.value = `User fetched: ${JSON.stringify(user)}`;
     } catch (error) {
       console.error(error);
