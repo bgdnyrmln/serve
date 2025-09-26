@@ -32,6 +32,19 @@
                 <td class="px-4 py-2 text-sm text-gray-700">{{ user.first_name + ' ' + user.last_name }}</td>
                 <td class="px-4 py-2 text-sm text-gray-700">{{ user.email }}</td>
                 <td class="px-4 py-2 text-sm text-gray-700">{{ user.role }}</td>
+                <td class="px-4 py-2 text-sm text-gray-700">
+                  <a
+                    :href="`/admin/users/${user.id}`"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    >Edit</a
+                  >
+                </td>
+                <td class="px-4 py-2 text-sm text-gray-700">
+                  <button
+                    @click="deleteUser(user.id)"
+                    class="text-red-600 hover:text-red-900"
+                  >Delete</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -62,6 +75,29 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+
+const deleteUser = async (userId) => {
+  const token = decodeURIComponent(
+      document.cookie
+        .split('; ')
+        .find((row) => row.startsWith("XSRF-TOKEN="))
+        ?.split("=")[1] ?? ''
+    )
+  if (!confirm('Are you sure you want to delete this user?')) {
+    return
+  }
+  try {
+    await axios.delete(`http://localhost:8000/api/users/${userId}`, {
+      withCredentials: true,
+      headers: { 'X-XSRF-TOKEN': token }
+    })
+    users.value = users.value.filter(user => user.id !== userId)
+  } catch (error) {
+    console.error('Error deleting user:', error)
+    alert('Failed to delete user. Please try again.')
+  }
+}
 
 
 
