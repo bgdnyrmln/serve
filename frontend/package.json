@@ -10,8 +10,14 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@qirolab/nuxt-sanctum-authentication": "^0.1.15",
+    "axios": "^1.11.0",
     "nuxt": "^4.0.3",
+    "sanctum": "^1.9.0",
     "vue": "^3.5.20",
     "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0"
   }
 }

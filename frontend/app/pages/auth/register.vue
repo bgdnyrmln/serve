@@ -1,0 +1,161 @@
+<template>
+  <div
+    class="flex flex-col items-center justify-center min-h-screen bg-gray-100"
+  >
+    <div class="w-full max-w-md p-8 space-y-3 bg-white shadow-lg rounded-xl">
+      <h1 class="text-2xl font-bold text-center">Register</h1>
+      <form @submit.prevent="submitForm">
+        <!-- First Name -->
+        <div class="flex flex-col mt-3 space-y-1">
+          <label for="first_name" class="text-sm font-medium">First Name</label>
+          <input
+            id="first_name"
+            type="text"
+            v-model="form.first_name"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+            :class="{ 'border-red-600': error.first_name }"
+          />
+          <span v-if="error.first_name" class="text-sm text-red-600">
+            {{ error.first_name[0] }}
+          </span>
+        </div>
+
+        <!-- Last Name -->
+        <div class="flex flex-col mt-3 space-y-1">
+          <label for="last_name" class="text-sm font-medium">Last Name</label>
+          <input
+            id="last_name"
+            type="text"
+            v-model="form.last_name"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+            :class="{ 'border-red-600': error.last_name }"
+          />
+          <span v-if="error.last_name" class="text-sm text-red-600">
+            {{ error.last_name[0] }}
+          </span>
+        </div>
+
+        <!-- Email -->
+        <div class="flex flex-col mt-3 space-y-1">
+          <label for="email" class="text-sm font-medium">Email</label>
+          <input
+            id="email"
+            type="email"
+            v-model="form.email"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+            :class="{ 'border-red-600': error.email }"
+          />
+          <span v-if="error.email" class="text-sm text-red-600">
+            {{ error.email[0] }}
+          </span>
+        </div>
+
+        <!-- Password -->
+        <div class="flex flex-col mt-3 space-y-1">
+          <label for="password" class="text-sm font-medium">Password</label>
+          <input
+            id="password"
+            type="password"
+            v-model="form.password"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+            :class="{ 'border-red-600': error.password }"
+          />
+          <span v-if="error.password" class="text-sm text-red-600">
+            {{ error.password[0] }}
+          </span>
+        </div>
+
+        <!-- General error -->
+        <div v-if="error.general" class="mt-2 text-sm text-red-600 text-center">
+          {{ error.general }}
+        </div>
+
+        <!-- Submit button -->
+        <button
+          type="submit"
+          class="w-full px-4 py-2 mt-4 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+        >
+          Register
+        </button>
+      </form>
+
+      <!-- Link to login -->
+      <div class="text-sm text-center text-gray-600">
+        Already have an account?
+        <button
+          @click="navigateTo('/login')"
+          class="text-blue-500 hover:underline"
+        >
+          Login here
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+definePageMeta({
+  middleware: ["$guest"], // Ensures only unauthenticated users can access this page
+});
+
+onMounted(async () => {
+  // Get CSRF token on page mount
+  await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
+    withCredentials: true
+  });
+});
+
+const router = useRouter();
+
+const form = ref({
+  first_name: "",
+  last_name: "",
+  email: "",
+  password: "",
+});
+
+const error = ref({});
+
+// Handles form submission
+const submitForm = async () => {
+  try {
+    // Retrieve CSRF token from cookies
+    const token = decodeURIComponent(
+      document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("XSRF-TOKEN="))
+        ?.split("=")[1] ?? ""
+    );
+
+    // Send POST request to register user
+    await axios.post("http://localhost:8000/register", form.value, {
+      withCredentials: true,
+      headers: {
+        "X-XSRF-TOKEN": token,
+      },
+    });
+
+    // Redirect to main page on success
+    router.push('/');
+  } catch (err) {
+    // Handle validation or server errors
+    console.error("Registration error:", err);
+    if (err.response?.data?.errors) {
+      error.value = err.response.data.errors;
+    } else if (err.response?.data?.message) {
+      error.value = { general: err.response.data.message };
+    } else {
+      error.value = { general: "An unexpected error occurred." };
+    }
+  }
+};
+</script>
+
+
+
+
+
