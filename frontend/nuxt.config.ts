@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ["@qirolab/nuxt-sanctum-authentication", "@nuxtjs/tailwindcss"],
+  modules: ["@qirolab/nuxt-sanctum-authentication", '@nuxtjs/tailwindcss'],
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
