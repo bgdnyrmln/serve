@@ -12,9 +12,9 @@ class Usercontroller extends Controller
 {
 
     public function index()
-{
-    return response()->json(User::all());
-}
+    {
+        return response()->json(User::all());
+    }
 
 
     public function store()
@@ -25,12 +25,12 @@ class Usercontroller extends Controller
             'email' => ['required', 'email'],
             'password' => ['required']
         ]);
-        $ValidatedAttributes['password'] = bcrypt($ValidatedAttributes['password']);
-
 
         $user = User::create($ValidatedAttributes);
 
         Auth::login($user);
+
+        return redirect('/cars');
     }
 
 
@@ -76,8 +76,6 @@ class Usercontroller extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'role' => 'required|in:1,2',
-            'exercises_count' => 'nullable|integer|min:0',
         ]);
 
         $user->update($validatedData);
