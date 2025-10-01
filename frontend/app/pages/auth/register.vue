@@ -1,74 +1,88 @@
 <template>
-  <div
-    class="flex flex-col items-center justify-center min-h-screen bg-gray-100"
-  >
-    <div class="w-full max-w-md p-8 space-y-3 bg-white shadow-lg rounded-xl">
-      <h1 class="text-2xl font-bold text-center">Register</h1>
-      <form @submit.prevent="submitForm">
-        <div class="flex flex-col space-y-1">
-          <label for="first_name" class="text-sm font-medium">First Name</label>
-          <input
-            id="first_name"
-            type="text"
-            v-model="form.first_name"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-            :class="{ 'border-red-600': error.first_name }"
-          />
-          <span v-if="error.first_name" class="text-sm text-red-600">
-            {{ error.first_name[0] }}
-          </span>
-        </div>
-        <div class="flex flex-col space-y-1">
-          <label for="last_name" class="text-sm font-medium">Last Name</label>
-          <input
-            id="last_name"
-            type="text"
-            v-model="form.last_name"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-            :class="{ 'border-red-600': error.last_name }"
-          />
-          <span v-if="error.last_name" class="text-sm text-red-600">
-            {{ error.last_name[0] }}
-          </span>
-        </div>
-        <div class="flex flex-col mt-3 space-y-1">
-          <label for="email" class="text-sm font-medium">Email</label>
-          <input
-            id="email"
-            type="email"
-            v-model="form.email"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-            :class="{ 'border-red-600': error.email }"
-          />
-          <span v-if="error.email" class="text-sm text-red-600">
-            {{ error.email[0] }}
-          </span>
-        </div>
-        <div class="flex flex-col mt-3 space-y-1">
-          <label for="password" class="text-sm font-medium">Password</label>
-          <input
-            id="password"
-            type="password"
-            v-model="form.password"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-            :class="{ 'border-red-600': error.password }"
-          />
-          <span v-if="error.password" class="text-sm text-red-600">
-            {{ error.password[0] }}
-          </span>
-        </div>
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900 pt-32 pb-16 px-6 relative overflow-hidden">
+    <!-- Background -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute -top-40 -right-40 w-80 h-80 bg-indigo-300 dark:bg-indigo-800 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-pulse"></div>
+      <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 dark:bg-purple-800 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
+      <div class="absolute top-40 left-1/2 w-60 h-60 bg-pink-300 dark:bg-pink-800 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-pulse" style="animation-delay: 4s;"></div>
+    </div>
 
-        <div v-if="error.general" class="mt-2 text-sm text-red-600 text-center">
-          {{ error.general }}
+    <div class="max-w-md mx-auto relative z-10">
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mb-5 shadow-lg">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
         </div>
-
-        <button
-          type="submit"
-          class="w-full px-4 py-2 mt-3 text-sm font-medium text-white bg-blue-500 rounded-md"
-        >
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 dark:from-white dark:via-indigo-200 dark:to-purple-200 bg-clip-text text-transparent">
           Register
-        </button>
-      </form>
+        </h1>
+        <p class="mt-3 text-gray-600 dark:text-gray-300">Create your account to get started.</p>
+      </div>
+
+      <!-- Card -->
+      <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20">
+        <form @submit.prevent="submitForm" class="space-y-6">
+          <div>
+            <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
+            <input
+              id="first_name"
+              type="text"
+              v-model="form.first_name"
+              class="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-2xl bg-white/50 dark:bg-gray-900/50 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+              :class="{ 'border-red-600': error.first_name }"
+            />
+            <span v-if="error.first_name" class="text-sm text-red-600">{{ error.first_name[0] }}</span>
+          </div>
+
+          <div>
+            <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
+            <input
+              id="last_name"
+              type="text"
+              v-model="form.last_name"
+              class="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-2xl bg-white/50 dark:bg-gray-900/50 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+              :class="{ 'border-red-600': error.last_name }"
+            />
+            <span v-if="error.last_name" class="text-sm text-red-600">{{ error.last_name[0] }}</span>
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+            <input
+              id="email"
+              type="email"
+              v-model="form.email"
+              class="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-2xl bg-white/50 dark:bg-gray-900/50 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+              :class="{ 'border-red-600': error.email }"
+            />
+            <span v-if="error.email" class="text-sm text-red-600">{{ error.email[0] }}</span>
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+            <input
+              id="password"
+              type="password"
+              v-model="form.password"
+              class="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-2xl bg-white/50 dark:bg-gray-900/50 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+              :class="{ 'border-red-600': error.password }"
+            />
+            <span v-if="error.password" class="text-sm text-red-600">{{ error.password[0] }}</span>
+          </div>
+
+          <div v-if="error.general" class="text-sm text-red-600 text-center">{{ error.general }}</div>
+
+          <button type="submit" class="group w-full py-4 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Register
+          </button>
+        </form>
+        <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-300">Already have an account? <a href="/login" class="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Login</a></p>
+      </div>
     </div>
   </div>
 </template>

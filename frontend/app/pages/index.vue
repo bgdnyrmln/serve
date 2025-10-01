@@ -91,53 +91,53 @@
 
         <!-- Quick Actions & Stats -->
         <div class="flex flex-col justify-between space-y-8">
-          <!-- Quick Actions -->
+          <!-- What's New -->
           <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-10 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20 hover:shadow-3xl transition-all duration-300">
             <div class="flex items-center mb-8">
-              <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+              <div class="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m4-4h-6a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V10a2 2 0 00-2-2z"></path>
                 </svg>
               </div>
-              <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Quick Actions</h2>
+              <h2 class="text-3xl font-bold text-gray-900 dark:text-white">What's New</h2>
             </div>
-            
+
             <div class="space-y-4">
-              <button class="group w-full py-4 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 text-left flex items-center">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:bg-white/30 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              <div class="flex items-start p-5 bg-gradient-to-r from-indigo-50 to-blue-100 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center mr-4">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <div class="font-bold">Login to Your Account</div>
-                  <div class="text-sm opacity-90">Access your dashboard</div>
+                  <div class="font-semibold text-gray-900 dark:text-white">New Admin Tools</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-300">Manage users faster with improved roles and permissions.</div>
                 </div>
-              </button>
-              
-              <button class="group w-full py-4 px-6 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 text-left flex items-center">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:bg-white/30 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+              </div>
+
+              <div class="flex items-start p-5 bg-gradient-to-r from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-800">
+                <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"></path>
                   </svg>
                 </div>
                 <div>
-                  <div class="font-bold">Create New Account</div>
-                  <div class="text-sm opacity-90">Join our platform</div>
+                  <div class="font-semibold text-gray-900 dark:text-white">Dark Mode Polish</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-300">Refined contrast and smoother transitions across pages.</div>
                 </div>
-              </button>
-              
-              <button class="group w-full py-4 px-6 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 text-left flex items-center">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:bg-white/30 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              </div>
+
+              <div class="flex items-start p-5 bg-gradient-to-r from-rose-50 to-pink-100 dark:from-rose-900/20 dark:to-pink-900/20 rounded-2xl border border-rose-200 dark:border-rose-800">
+                <div class="w-10 h-10 bg-rose-600 rounded-xl flex items-center justify-center mr-4">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                   </svg>
                 </div>
                 <div>
-                  <div class="font-bold">Contact Support</div>
-                  <div class="text-sm opacity-90">Get help & assistance</div>
+                  <div class="font-semibold text-gray-900 dark:text-white">Faster API</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-300">Performance upgrades deliver snappier load times.</div>
                 </div>
-              </button>
+              </div>
             </div>
           </div>
 

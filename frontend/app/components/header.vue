@@ -55,8 +55,36 @@
         v-if="isLoggedIn"
         @click="logout"
         class="text-white bg-indigo-600 px-4 py-2 rounded-md shadow-sm hover:opacity-95"
-        >Logout</a
+      >Logout</a
       >
+
+      <!-- Theme Toggle -->
+      <button
+        @click="toggleTheme"
+        class="relative inline-flex items-center h-9 rounded-full px-2 bg-white/20 dark:bg-gray-700/30 border border-gray-200/50 dark:border-gray-700/60 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md group"
+        :aria-pressed="isDark ? 'true' : 'false'"
+        title="Toggle dark mode"
+      >
+        <span
+          class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity"
+        ></span>
+        <span
+          class="w-7 h-7 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 dark:from-indigo-500 dark:to-purple-600 flex items-center justify-center text-white shadow-md transform transition-transform duration-300"
+          :class="isDark ? 'translate-x-8' : 'translate-x-0'"
+        >
+          <!-- Knob icon (sun/moon) -->
+          <svg v-if="!isDark" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 13a5 5 0 100-10 5 5 0 000 10zm7-6a1 1 0 100 2h1a1 1 0 100-2h-1zM2 9a1 1 0 100 2H1a1 1 0 100-2h1zm14.657 6.657a1 1 0 00-1.414-1.414l-.707.707a1 1 0 101.414 1.414l.707-.707zM4.464 5.879A1 1 0 105.88 4.465l-.708-.707A1 1 0 103.757 5.17l.707.707zm9.192-2.121a1 1 0 10-1.414 1.414l.707.707a1 1 0 101.414-1.414l-.707-.707zM4.464 14.121l-.707.707a1 1 0 001.414 1.414l.707-.707A1 1 0 104.464 14.12z"/>
+          </svg>
+          <svg v-else class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+          </svg>
+        </span>
+        <span class="w-8" aria-hidden="true"></span>
+        <span class="flex items-center gap-1 text-xs font-medium text-gray-700 dark:text-gray-300 ml-1">
+          <span class="hidden lg:inline">{{ isDark ? 'Dark' : 'Light' }}</span>
+        </span>
+      </button>
     </div>
 
     <!-- Mobile dropdown -->
@@ -74,6 +102,17 @@
         >Contact</a
       >
       <div class="border-t border-gray-200 dark:border-gray-700 w-full pt-4">
+        <!-- Mobile Theme Toggle -->
+        <button
+          @click="toggleTheme"
+          class="mb-4 w-full flex items-center justify-between px-4 py-2 rounded-xl bg-white/20 dark:bg-gray-700/30 border border-gray-200/50 dark:border-gray-700/60"
+        >
+          <span class="text-sm text-gray-700 dark:text-gray-300">Theme: {{ isDark ? 'Dark' : 'Light' }}</span>
+          <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 dark:from-indigo-500 dark:to-purple-600 text-white">
+            <svg v-if="!isDark" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 13a5 5 0 100-10 5 5 0 000 10z"/></svg>
+            <svg v-else class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+          </span>
+        </button>
         <a
           v-if="!isLoggedIn"
           href="/login"
@@ -103,6 +142,32 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 const message = ref('Loading...');
 var isAdmin = ref(false);
+const isOpen = ref(false);
+
+// Theme handling
+const isDark = ref(false);
+
+const applyThemeClass = (dark) => {
+  const root = document.documentElement;
+  const body = document.body;
+  if (dark) {
+    root.classList.add('dark');
+    body.classList.add('dark');
+  } else {
+    root.classList.remove('dark');
+    body.classList.remove('dark');
+  }
+};
+
+const setTheme = (theme) => {
+  isDark.value = theme === 'dark';
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+  applyThemeClass(isDark.value);
+};
+
+const toggleTheme = () => {
+  setTheme(isDark.value ? 'light' : 'dark');
+};
 
 onMounted(() => {
   axios.get('http://localhost:8000/sanctum/csrf-cookie', {
@@ -122,6 +187,29 @@ onMounted(() => {
       message.value = 'You are not logged in.';
     }
   })();
+  // Initialize theme from storage or system preference
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark' || saved === 'light') {
+      setTheme(saved);
+    } else {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'dark' : 'light');
+    }
+    // sync isDark with current DOM class in case of SSR hydration differences
+    isDark.value = document.documentElement.classList.contains('dark');
+    // React to system changes
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        const savedTheme = localStorage.getItem('theme');
+        if (!savedTheme) {
+          setTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    }
+  } catch (_) {
+    // no-op if storage not available
+  }
 });
 
 const isLoggedIn = computed(() => message.value !== 'You are not logged in.');
