@@ -1,48 +1,48 @@
 <template>
-  <div class="flex h-screen bg-gray-100">
+  <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
     <adminsidebar />
     <!-- Main content -->
     <div class="flex-1 flex flex-col">
       <!-- Topbar -->
-      <header class="flex items-center justify-between bg-white shadow px-6 py-4">
-        <h1 class="text-xl font-semibold text-gray-800">Admin Dashboard</h1>
+      <header class="flex items-center justify-between bg-white dark:bg-gray-800 shadow px-6 py-4">
+        <h1 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Dashboard</h1>
       </header>
 
       <!-- Dashboard content -->
       <main class="flex-1 p-6 overflow-y-auto">
-        <h2 class="text-lg font-semibold mb-4">Users</h2>
-        <div v-if="loading" class="text-gray-500">Loading users...</div>
+        <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Users</h2>
+        <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading users...</div>
         <div v-else>
-          <table class="min-w-full border border-gray-200 bg-white shadow rounded-lg">
-            <thead class="bg-gray-50">
+          <table class="min-w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow rounded-lg">
+            <thead class="bg-gray-50 dark:bg-gray-800">
               <tr>
-                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">ID</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Name</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Email</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Role</th>
+                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">ID</th>
+                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Name</th>
+                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Email</th>
+                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Role</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="user in users"
                 :key="user.id"
-                class="border-t hover:bg-gray-50"
+                class="border-t hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
               >
-                <td class="px-4 py-2 text-sm text-gray-700">{{ user.id }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ user.first_name + ' ' + user.last_name }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ user.email }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ user.role }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">
+                <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ user.id }}</td>
+                <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ user.first_name + ' ' + user.last_name }}</td>
+                <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ user.email }}</td>
+                <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ user.role }}</td>
+                <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">
                   <a
                     :href="`/admin/users/${user.id}`"
-                    class="text-indigo-600 hover:text-indigo-900"
+                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
                     >Edit</a
                   >
                 </td>
                 <td class="px-4 py-2 text-sm text-gray-700">
                   <button
                     @click="deleteUser(user.id)"
-                    class="text-red-600 hover:text-red-900"
+                    class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
                   >Delete</button>
                 </td>
               </tr>
@@ -65,9 +65,10 @@ definePageMeta({
 const users = ref([])
 const loading = ref(true)
 
+
 onMounted(async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/users', { withCredentials: true })
+    const response = await axios.get('/api/users', { withCredentials: true })
     users.value = response.data
   } catch (error) {
     console.error('Error fetching users:', error)
@@ -88,7 +89,7 @@ const deleteUser = async (userId) => {
     return
   }
   try {
-    await axios.delete(`http://localhost:8000/api/users/${userId}`, {
+    await axios.delete(`/api/users/${userId}`, {
       withCredentials: true,
       headers: { 'X-XSRF-TOKEN': token }
     })

@@ -61,28 +61,41 @@
       <!-- Theme Toggle -->
       <button
         @click="toggleTheme"
-        class="relative inline-flex items-center h-9 rounded-full px-2 bg-white/20 dark:bg-gray-700/30 border border-gray-200/50 dark:border-gray-700/60 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md group"
+        class="relative inline-flex items-center h-9 rounded-full w-28 bg-white/20 dark:bg-gray-700/30 border border-gray-200/50 dark:border-gray-700/60 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md group overflow-hidden"
         :aria-pressed="isDark ? 'true' : 'false'"
         title="Toggle dark mode"
       >
-        <span
-          class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity"
-        ></span>
+        <span class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+
+<!-- Sun (left) and label (right) when light; swap when dark -->
+<span class="absolute inset-0 flex items-center justify-between px-3 text-xs font-medium select-none">
+  <!-- Sun icon -->
+  <span 
+    class="flex items-center gap-1 text-amber-500" 
+    :class="isDark ? 'order-2 opacity-60' : 'order-1'"
+  >
+    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zM10 16a5 5 0 100-10 5 5 0 000 10zM18 9h1a1 1 0 110 2h-1zM1 9a1 1 0 100 2H0a1 1 0 100-2h1z"/>
+    </svg>
+  </span>
+
+  <!-- Label changes based on isDark -->
+  <span 
+    class="text-gray-700 dark:text-gray-300" 
+    :class="isDark ? 'order-1 opacity-60' : 'order-2'"
+  >
+    {{ isDark ? 'Dark' : 'Light' }}
+  </span>
+</span>
+
+
+        <!-- Knob -->
         <span
           class="w-7 h-7 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 dark:from-indigo-500 dark:to-purple-600 flex items-center justify-center text-white shadow-md transform transition-transform duration-300"
-          :class="isDark ? 'translate-x-8' : 'translate-x-0'"
+          :class="isDark ? 'translate-x-[76px]' : 'translate-x-1'"
         >
-          <!-- Knob icon (sun/moon) -->
-          <svg v-if="!isDark" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 13a5 5 0 100-10 5 5 0 000 10zm7-6a1 1 0 100 2h1a1 1 0 100-2h-1zM2 9a1 1 0 100 2H1a1 1 0 100-2h1zm14.657 6.657a1 1 0 00-1.414-1.414l-.707.707a1 1 0 101.414 1.414l.707-.707zM4.464 5.879A1 1 0 105.88 4.465l-.708-.707A1 1 0 103.757 5.17l.707.707zm9.192-2.121a1 1 0 10-1.414 1.414l.707.707a1 1 0 101.414-1.414l-.707-.707zM4.464 14.121l-.707.707a1 1 0 001.414 1.414l.707-.707A1 1 0 104.464 14.12z"/>
-          </svg>
-          <svg v-else class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-          </svg>
-        </span>
-        <span class="w-8" aria-hidden="true"></span>
-        <span class="flex items-center gap-1 text-xs font-medium text-gray-700 dark:text-gray-300 ml-1">
-          <span class="hidden lg:inline">{{ isDark ? 'Dark' : 'Light' }}</span>
+          <svg v-if="!isDark" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1z"/></svg>
+          <svg v-else class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
         </span>
       </button>
     </div>

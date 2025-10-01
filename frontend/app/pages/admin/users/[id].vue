@@ -1,43 +1,43 @@
 <template>
-  <div class="flex justify-center min-h-screen bg-gray-100 p-6">
-    <div class="w-full max-w-md bg-white shadow-lg rounded-xl p-6">
-      <h1 class="text-2xl font-bold mb-4">Edit User</h1>
+  <div class="flex justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
+    <div class="w-full max-w-md bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+      <h1 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Edit User</h1>
 
       <form @submit.prevent="submitForm" class="space-y-4">
         <!-- First Name -->
         <div>
-          <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+          <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
           <input
             id="first_name"
             v-model="form.first_name"
             type="text"
-            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-          <span v-if="error.first_name" class="text-red-600 text-sm">{{ error.first_name[0] }}</span>
+          <span v-if="error.first_name" class="text-red-600 dark:text-red-400 text-sm">{{ error.first_name[0] }}</span>
         </div>
 
         <!-- Last Name -->
         <div>
-          <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+          <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
           <input
             id="last_name"
             v-model="form.last_name"
             type="text"
-            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-          <span v-if="error.last_name" class="text-red-600 text-sm">{{ error.last_name[0] }}</span>
+          <span v-if="error.last_name" class="text-red-600 dark:text-red-400 text-sm">{{ error.last_name[0] }}</span>
         </div>
 
         <!-- Email -->
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
           <input
             id="email"
             v-model="form.email"
             type="email"
-            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-          <span v-if="error.email" class="text-red-600 text-sm">{{ error.email[0] }}</span>
+          <span v-if="error.email" class="text-red-600 dark:text-red-400 text-sm">{{ error.email[0] }}</span>
         </div>
 
         <!-- Submit button -->
@@ -48,7 +48,7 @@
           Update User
         </button>
 
-        <div v-if="error.general" class="text-red-600 text-sm mt-2">
+        <div v-if="error.general" class="text-red-600 dark:text-red-400 text-sm mt-2">
           {{ error.general }}
         </div>
 
