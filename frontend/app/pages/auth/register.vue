@@ -5,8 +5,7 @@
     <div class="w-full max-w-md p-8 space-y-3 bg-white shadow-lg rounded-xl">
       <h1 class="text-2xl font-bold text-center">Register</h1>
       <form @submit.prevent="submitForm">
-        <!-- First Name -->
-        <div class="flex flex-col mt-3 space-y-1">
+        <div class="flex flex-col space-y-1">
           <label for="first_name" class="text-sm font-medium">First Name</label>
           <input
             id="first_name"
@@ -19,9 +18,7 @@
             {{ error.first_name[0] }}
           </span>
         </div>
-
-        <!-- Last Name -->
-        <div class="flex flex-col mt-3 space-y-1">
+        <div class="flex flex-col space-y-1">
           <label for="last_name" class="text-sm font-medium">Last Name</label>
           <input
             id="last_name"
@@ -34,8 +31,6 @@
             {{ error.last_name[0] }}
           </span>
         </div>
-
-        <!-- Email -->
         <div class="flex flex-col mt-3 space-y-1">
           <label for="email" class="text-sm font-medium">Email</label>
           <input
@@ -49,8 +44,6 @@
             {{ error.email[0] }}
           </span>
         </div>
-
-        <!-- Password -->
         <div class="flex flex-col mt-3 space-y-1">
           <label for="password" class="text-sm font-medium">Password</label>
           <input
@@ -65,33 +58,21 @@
           </span>
         </div>
 
-        <!-- General error -->
         <div v-if="error.general" class="mt-2 text-sm text-red-600 text-center">
           {{ error.general }}
         </div>
 
-        <!-- Submit button -->
         <button
           type="submit"
-          class="w-full px-4 py-2 mt-4 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+          class="w-full px-4 py-2 mt-3 text-sm font-medium text-white bg-blue-500 rounded-md"
         >
           Register
         </button>
       </form>
-
-      <!-- Link to login -->
-      <div class="text-sm text-center text-gray-600">
-        Already have an account?
-        <button
-          @click="navigateTo('/login')"
-          class="text-blue-500 hover:underline"
-        >
-          Login here
-        </button>
-      </div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -154,8 +135,3 @@ const submitForm = async () => {
   }
 };
 </script>
-
-
-
-
-

@@ -51,6 +51,9 @@
                 <td class="px-4 py-2 text-sm text-gray-700">{{ session.user_id }}</td>
                 <td class="px-4 py-2 text-sm text-gray-700">{{ formatTimestamp(session.last_activity) }}</td>
               </tr>
+              <tr v-if="sessions.length === 0">
+                <td colspan="3" class="px-4 py-4 text-center text-sm text-gray-500">No active sessions</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -86,11 +89,16 @@ onMounted(async () => {
     const userRes = await axios.get('http://localhost:8000/api/users', { withCredentials: true })
     totalUsers.value = userRes.data.length
 
-    // Active sessions
+    // Active sessions (only last 5 min + must have user_id)
     const sessionsRes = await axios.get('http://localhost:8000/api/sessions', { withCredentials: true })
-    sessions.value = sessionsRes.data
-    activeUsers.value = sessions.value.length
+    const now = Math.floor(Date.now() / 1000)
 
+    const activeSessions = sessionsRes.data.filter(session => {
+      return session.user_id && (now - session.last_activity <= 300)
+    })
+
+    sessions.value = activeSessions
+    activeUsers.value = activeSessions.length
     loading.value = false
 
     // Placeholders for reservations/tables
