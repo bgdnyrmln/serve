@@ -3,6 +3,13 @@ export default defineNuxtConfig({
   modules: ["@qirolab/nuxt-sanctum-authentication", '@nuxtjs/tailwindcss'],
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  css: ['@/assets/css/tailwind.css'],
+
+  tailwindcss: {
+    configPath: 'tailwind.config.ts',
+    viewer: false,
+    exposeConfig: false
+  },
 
   app: {
     head: {

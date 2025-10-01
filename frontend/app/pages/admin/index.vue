@@ -1,58 +1,58 @@
 <template>
-  <div class="flex h-screen bg-gray-100">
+  <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
     <!-- Sidebar -->
     <adminsidebar />
 
     <!-- Main content -->
-    <div class="flex-1 p-6 overflow-y-auto">
-      <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
+  <div class="flex-1 p-6 overflow-y-auto">
+  <h1 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Admin Dashboard</h1>
 
       <!-- Stats section -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div class="bg-white shadow rounded-xl p-6 flex flex-col items-start">
-          <p class="text-sm font-medium text-gray-500">Active Users (last 5 min)</p>
-          <p class="mt-2 text-3xl font-bold text-indigo-600">{{ activeUsers }}</p>
+        <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 flex flex-col items-start">
+          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Active Users (last 5 min)</p>
+          <p class="mt-2 text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ activeUsers }}</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-6 flex flex-col items-start">
-          <p class="text-sm font-medium text-gray-500">Total Users</p>
-          <p class="mt-2 text-3xl font-bold text-green-600">{{ totalUsers }}</p>
+        <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 flex flex-col items-start">
+          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Users</p>
+          <p class="mt-2 text-3xl font-bold text-green-600 dark:text-green-400">{{ totalUsers }}</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-6 flex flex-col items-start">
-          <p class="text-sm font-medium text-gray-500">Today’s Reservations</p>
-          <p class="mt-2 text-3xl font-bold text-blue-600">{{ reservationsToday }}</p>
+        <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 flex flex-col items-start">
+          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Today’s Reservations</p>
+          <p class="mt-2 text-3xl font-bold text-blue-600 dark:text-blue-400">{{ reservationsToday }}</p>
         </div>
-        <div class="bg-white shadow rounded-xl p-6 flex flex-col items-start">
-          <p class="text-sm font-medium text-gray-500">Available Tables</p>
-          <p class="mt-2 text-3xl font-bold text-red-600">{{ availableTables }}</p>
+        <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 flex flex-col items-start">
+          <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Available Tables</p>
+          <p class="mt-2 text-3xl font-bold text-red-600 dark:text-red-400">{{ availableTables }}</p>
         </div>
       </div>
 
       <!-- Active sessions table -->
-      <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-lg font-semibold mb-4">Active Sessions</h2>
+      <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Active Sessions</h2>
 
-        <div v-if="loading" class="text-gray-500">Loading sessions...</div>
+        <div v-if="loading" class="text-gray-500 dark:text-gray-400">Loading sessions...</div>
         <div v-else>
-          <table class="min-w-full border border-gray-200 bg-white rounded-lg">
-            <thead class="bg-gray-50">
+          <table class="min-w-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg">
+            <thead class="bg-gray-50 dark:bg-gray-800">
               <tr>
-                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Session ID</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">User ID</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Last Activity</th>
+                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Session ID</th>
+                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">User ID</th>
+                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Last Activity</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="session in sessions"
                 :key="session.id"
-                class="border-t hover:bg-gray-50"
+                class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
-                <td class="px-4 py-2 text-sm text-gray-700">{{ session.id }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ session.user_id }}</td>
-                <td class="px-4 py-2 text-sm text-gray-700">{{ formatTimestamp(session.last_activity) }}</td>
+                <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ session.id }}</td>
+                <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ session.user_id }}</td>
+                <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ formatTimestamp(session.last_activity) }}</td>
               </tr>
               <tr v-if="sessions.length === 0">
-                <td colspan="3" class="px-4 py-4 text-center text-sm text-gray-500">No active sessions</td>
+                <td colspan="3" class="px-4 py-4 text-center text-sm text-gray-500 dark:text-gray-400">No active sessions</td>
               </tr>
             </tbody>
           </table>
