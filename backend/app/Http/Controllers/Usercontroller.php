@@ -76,6 +76,7 @@ class Usercontroller extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'role' => 'required|string|in:user,admin',
         ]);
 
         $user->update($validatedData);
