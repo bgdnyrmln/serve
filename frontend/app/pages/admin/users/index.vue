@@ -68,7 +68,7 @@ const loading = ref(true)
 
 onMounted(async () => {
   try {
-    const response = await axios.get('/api/users', { withCredentials: true })
+    const response = await axios.get('http://localhost:8000/api/users', { withCredentials: true })
     users.value = response.data
   } catch (error) {
     console.error('Error fetching users:', error)
@@ -89,7 +89,7 @@ const deleteUser = async (userId) => {
     return
   }
   try {
-    await axios.delete(`/api/users/${userId}`, {
+    await axios.delete(`http://localhost:8000/api/users/${userId}`, {
       withCredentials: true,
       headers: { 'X-XSRF-TOKEN': token }
     })

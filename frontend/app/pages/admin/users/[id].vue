@@ -40,6 +40,15 @@
           <span v-if="error.email" class="text-red-600 dark:text-red-400 text-sm">{{ error.email[0] }}</span>
         </div>
 
+        <div>
+            <!-- Role (read-only) -->
+            <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Role</label>
+            <select name="role" id="role" v-model="form.role" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+        </div>
+
         <!-- Submit button -->
         <button
           type="submit"
@@ -67,9 +76,10 @@ const router = useRouter()
 const userId = route.params.id
 
 const form = ref({
-  first_name: '',
-  last_name: '',
-  email: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    role: '',
 })
 
 const error = ref({})
@@ -80,6 +90,7 @@ onMounted(async () => {
     form.value.first_name = res.data.first_name
     form.value.last_name = res.data.last_name
     form.value.email = res.data.email
+    form.value.role = res.data.role
   } catch (err) {
     console.error('Error fetching user:', err)
   }
