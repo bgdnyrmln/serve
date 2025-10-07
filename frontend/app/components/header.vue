@@ -144,7 +144,6 @@
           class="block w-full text-center text-white bg-indigo-600 px-4 py-2 rounded-md shadow-sm hover:opacity-95"
           >Logout</a
         >
-        
       </div>
     </div>
   </nav>

@@ -11,6 +11,8 @@ Route::delete('/users/{user}', [UserController::class, 'destroy']) -> middleware
 Route::put('/users/{user}', [UserController::class, 'update']) -> middleware('auth:sanctum');
 
 Route::get('/sessions', [SessionController::class, 'index']);
+Route::get('/sessions/{session}', [SessionController::class, 'show']);
+Route::delete('/sessions/{user}', [SessionController::class, 'destroy']) -> middleware('auth:sanctum');
 
 
 Route::get('/user', function (Request $request) {

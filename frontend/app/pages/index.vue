@@ -25,7 +25,7 @@
 
     <div class="max-w-7xl mx-auto relative z-10">
       <!-- Header -->
-      <div class="text-center mb-20">
+      <div class="text-center mb-20 h-screen mt-16">
         <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mb-6 shadow-lg">
           <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
@@ -38,7 +38,13 @@
           Your trusted platform for seamless service management and user administration. 
           <span class="text-indigo-600 dark:text-indigo-400 font-semibold">Experience the future</span> of digital services.
         </p>
+        <button class="mx-auto mt-16 mb-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex items-center space-x-3"
+          @click="scrollDown">
+          Get Started!
+        </button>
       </div>
+
+
 
       <div class="flex justify-center">
         <!-- Main Content -->
@@ -110,3 +116,24 @@
     </div>
   </div>
 </template>
+
+
+
+
+<script setup>
+const scrollDown = () => {
+  // Calculate current scroll position
+  const currentScroll = window.scrollY
+
+  // Determine how many full screens we’ve scrolled already
+  const currentSection = Math.floor(currentScroll / window.innerHeight)
+
+  // Scroll to the start of the next section (exact multiple of 100vh)
+  const nextScroll = (currentSection + 1) * window.innerHeight
+
+  window.scrollTo({
+    top: nextScroll + 150,
+    behavior: 'smooth',
+  })
+}
+</script>
