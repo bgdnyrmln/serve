@@ -5,6 +5,22 @@
       <div class="absolute -top-40 -right-40 w-80 h-80 bg-indigo-300 dark:bg-indigo-800 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-pulse"></div>
       <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 dark:bg-purple-800 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
       <div class="absolute top-40 left-1/2 w-60 h-60 bg-pink-300 dark:bg-pink-800 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-xl opacity-70 animate-pulse" style="animation-delay: 4s;"></div>
+
+      <!-- Animated gradient mesh layer -->
+      <div class="pointer-events-none absolute -inset-1 opacity-50">
+        <div class="w-[140%] h-[140%] -left-[20%] -top-[20%] absolute bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-indigo-300/20 via-fuchsia-300/20 to-teal-300/20 dark:from-indigo-900/20 dark:via-fuchsia-900/10 dark:to-teal-900/10 rounded-full animate-slow-pan"></div>
+      </div>
+
+      <!-- Subtle animated grid overlay -->
+      <div class="pointer-events-none absolute inset-0 mix-blend-overlay opacity-30 dark:opacity-20" style="background-image: linear-gradient(to right, rgba(100,116,139,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(100,116,139,0.15) 1px, transparent 1px); background-size: 48px 48px;" ></div>
+
+      <!-- Floating particles -->
+      <div class="pointer-events-none absolute inset-0">
+        <span class="absolute left-10 top-16 w-2 h-2 rounded-full bg-indigo-400/70 blur-[1px] animate-float-slow"></span>
+        <span class="absolute right-16 top-24 w-1.5 h-1.5 rounded-full bg-emerald-400/70 blur-[1px] animate-float-slow float-delay-1"></span>
+        <span class="absolute left-1/3 bottom-20 w-1.5 h-1.5 rounded-full bg-pink-400/70 blur-[1px] animate-float-slow float-delay-2"></span>
+        <span class="absolute right-1/4 bottom-12 w-2 h-2 rounded-full bg-cyan-400/70 blur-[1px] animate-float-slow float-delay-3"></span>
+      </div>
     </div>
 
     <div class="max-w-7xl mx-auto relative z-10">
@@ -24,9 +40,9 @@
         </p>
       </div>
 
-      <div class="grid lg:grid-cols-2 gap-12">
+      <div class="flex justify-center">
         <!-- Main Content -->
-        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-10 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20 hover:shadow-3xl transition-all duration-300">
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-10 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20 hover:shadow-3xl transition-all duration-300 max-w-3xl w-full">
           <div class="flex items-center mb-8">
             <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,83 +105,8 @@
           </div>
         </div>
 
-        <!-- Quick Actions & Stats -->
-        <div class="flex flex-col justify-between space-y-8">
-          <!-- Quick Actions -->
-          <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-10 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20 hover:shadow-3xl transition-all duration-300">
-            <div class="flex items-center mb-8">
-              <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-              </div>
-              <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Quick Actions</h2>
-            </div>
-            
-            <div class="space-y-4">
-              <button class="group w-full py-4 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 text-left flex items-center">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:bg-white/30 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <div class="font-bold">Login to Your Account</div>
-                  <div class="text-sm opacity-90">Access your dashboard</div>
-                </div>
-              </button>
-              
-              <button class="group w-full py-4 px-6 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 text-left flex items-center">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:bg-white/30 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <div class="font-bold">Create New Account</div>
-                  <div class="text-sm opacity-90">Join our platform</div>
-                </div>
-              </button>
-              
-              <button class="group w-full py-4 px-6 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 text-left flex items-center">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mr-4 group-hover:bg-white/30 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <div class="font-bold">Contact Support</div>
-                  <div class="text-sm opacity-90">Get help & assistance</div>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          <!-- Stats Card -->
-          <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-10 rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20 hover:shadow-3xl transition-all duration-300">
-            <div class="flex items-center mb-8">
-              <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-              </div>
-              <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Platform Stats</h2>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-6">
-              <div class="p-6 bg-gradient-to-br from-indigo-50 to-blue-100 dark:from-indigo-900/30 dark:to-blue-900/30 rounded-2xl border border-indigo-200 dark:border-indigo-800 text-center group hover:scale-105 transition-transform duration-300">
-                <div class="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-2 group-hover:scale-110 transition-transform duration-300">500+</div>
-                <div class="text-sm font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wide">Active Users</div>
-              </div>
-              <div class="p-6 bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-2xl border border-green-200 dark:border-green-800 text-center group hover:scale-105 transition-transform duration-300">
-                <div class="text-4xl font-bold text-green-600 dark:text-green-400 mb-2 group-hover:scale-110 transition-transform duration-300">99.9%</div>
-                <div class="text-sm font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wide">Uptime</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </div>
   </div>
 </template>
-
