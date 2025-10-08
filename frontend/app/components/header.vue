@@ -30,10 +30,11 @@
     </button>
 
     <!-- Middle: Nav links -->
-    <div class="hidden md:flex space-x-6">
+      <div class="hidden md:flex space-x-6">
       <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/">Home</a>
       <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/about">About us</a>
       <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/contacts">Contact</a>
+      <a v-if="isLoggedIn" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/profile">Profile</a>
       <a v-if="isAdmin" href="/admin" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600">Admin</a>
     </div>
 
