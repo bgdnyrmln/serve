@@ -10,7 +10,7 @@ class RestaurantController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Restaurant::query();
+        $query = Restaurant::query()->with('owner');
 
         $search = trim((string) $request->query('q', ''));
         if ($search !== '') {
@@ -18,6 +18,12 @@ class RestaurantController extends Controller
         }
 
         return $query->orderBy('created_at', 'desc')->get();
+    }
+
+    public function show(Restaurant $restaurant)
+    {
+        $restaurant->load('owner');
+        return response()->json($restaurant);
     }
 
     public function store(Request $request)

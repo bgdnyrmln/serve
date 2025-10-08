@@ -27,4 +27,9 @@ Route::get('/user', function (Request $request) {
 
     // Restaurants
     Route::get('/restaurants', [RestaurantController::class, 'index']);
+    Route::get('/restaurants/{restaurant}', [RestaurantController::class, 'show']);
     Route::post('/restaurants', [RestaurantController::class, 'store'])->middleware('auth:sanctum');
+    
+    // Reviews
+    Route::get('/restaurants/{restaurant}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'index']);
+    Route::post('/restaurants/{restaurant}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'store'])->middleware('auth:sanctum');
