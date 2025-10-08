@@ -8,9 +8,16 @@ use App\Models\Restaurant;
 
 class RestaurantController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Restaurant::orderBy('created_at', 'desc')->get();
+        $query = Restaurant::query();
+
+        $search = trim((string) $request->query('q', ''));
+        if ($search !== '') {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        return $query->orderBy('created_at', 'desc')->get();
     }
 
     public function store(Request $request)
