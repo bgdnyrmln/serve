@@ -38,21 +38,32 @@
               <tr>
                 <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Session ID</th>
                 <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">User ID</th>
-                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Last Activity</th>
-              </tr>
+                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Last Activity</th>                
+                <th>
+                    <div class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">
+                        <!-- Placeholder for search input -->
+                        <input 
+                            type="text" 
+                            placeholder="Search..." 
+                            class="w-full bg-gray-100 dark:bg-gray-700 px-3 py-1 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500" 
+                            v-model="searchQuery"
+                        />
+                    </div>
+                </th>
+            </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="session in sessions"
-                :key="session.id"
-                class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-              >
+              <tr v-for="session in filteredSessions" :key="session.id" class="border-t hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
                 <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ session.id }}</td>
                 <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ session.user_id }}</td>
                 <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ formatTimestamp(session.last_activity) }}</td>
-              </tr>
+                <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">
+                  <button class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+                  @click="terminateSession(session.user_id)">terminate session</button>
+                </td>
+            </tr>
               <tr v-if="sessions.length === 0">
-                <td colspan="3" class="px-4 py-4 text-center text-sm text-gray-500 dark:text-gray-400">No active sessions</td>
+                <td colspan="4" class="px-4 py-4 text-center text-sm text-gray-500 dark:text-gray-400">No active sessions</td>
               </tr>
             </tbody>
           </table>
@@ -63,8 +74,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+
+
+const searchQuery = ref('')
+
+// Filter sessions based on search input
+const filteredSessions = computed(() => {
+  if (!searchQuery.value) return sessions.value
+  const q = searchQuery.value.toLowerCase()
+  return sessions.value.filter(session =>
+    String(session.id).includes(q) ||
+    String(session.user_id).includes(q) ||
+    formatTimestamp(session.last_activity).toLowerCase().includes(q)
+  )
+})
+
 
 definePageMeta({
   middleware: ["isadmin"],
@@ -76,6 +102,10 @@ const reservationsToday = ref(0)
 const availableTables = ref(0)
 const sessions = ref([])
 const loading = ref(true)
+const token = ref('')
+
+
+
 
 // Convert Unix timestamp to readable time
 const formatTimestamp = (ts) => {
@@ -83,8 +113,31 @@ const formatTimestamp = (ts) => {
   return date.toLocaleString()
 }
 
+const terminateSession =async (userId) => {
+      try {
+        await axios.delete(`http://localhost:8000/api/sessions/${userId}`, {
+            withCredentials: true,
+            headers: { 'X-XSRF-TOKEN': token.value }
+        })
+        // Remove session from local list
+        sessions.value = sessions.value.filter(s => s.user_id !== userId)
+        activeUsers.value = sessions.value.length
+      } catch (error) {
+        console.error('Error terminating session:', error)
+      }
+    }
+
 onMounted(async () => {
   try {
+    // Fetch CSRF token
+    await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true })
+    token.value = decodeURIComponent(
+      document.cookie
+        .split('; ')
+        .find((row) => row.startsWith("XSRF-TOKEN="))
+        ?.split("=")[1] ?? ''
+    )
+
     // Total users
     const userRes = await axios.get('http://localhost:8000/api/users', { withCredentials: true })
     totalUsers.value = userRes.data.length
@@ -92,6 +145,7 @@ onMounted(async () => {
     // Active sessions (only last 5 min + must have user_id)
     const sessionsRes = await axios.get('http://localhost:8000/api/sessions', { withCredentials: true })
     const now = Math.floor(Date.now() / 1000)
+
 
     const activeSessions = sessionsRes.data.filter(session => {
       return session.user_id && (now - session.last_activity <= 300)

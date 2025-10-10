@@ -57,17 +57,32 @@
               <div v-if="ownedLoading" class="text-sm text-gray-700 dark:text-gray-300">Loading…</div>
               <div v-else>
                 <div v-if="owned.length === 0" class="text-sm text-gray-600 dark:text-gray-400">You don't own any restaurants yet.</div>
-                <ul class="space-y-3 mt-3">
-                  <li v-for="r in owned" :key="r.id" class="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-lg border border-gray-100 dark:border-gray-700">
+                <div class="space-y-3 mt-3">
+                  <NuxtLink 
+                    v-for="r in owned" 
+                    :key="r.id" 
+                    :to="`/restaurant/${r.id}`"
+                    class="group block p-3 bg-gray-50 dark:bg-gray-800/60 rounded-lg border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700/60 hover:shadow-md transition-all cursor-pointer"
+                  >
                     <div class="flex justify-between items-center">
-                      <div>
-                        <div class="font-semibold text-gray-900 dark:text-white">{{ r.name }}</div>
+                      <div class="flex-1">
+                        <div class="font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ r.name }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-300">{{ r.cuisine }} · {{ r.location }}</div>
+                        <div v-if="r.description" class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{{ r.description }}</div>
                       </div>
-                      <div class="text-sm text-gray-600 dark:text-gray-300">{{ r.open ? 'Open' : 'Closed' }}</div>
+                      <div class="flex items-center space-x-3">
+                        <div class="text-sm text-gray-600 dark:text-gray-300">{{ r.open ? 'Open' : 'Closed' }}</div>
+                        <!-- Click indicator -->
+                        <div class="flex items-center text-indigo-600 dark:text-indigo-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span class="hidden sm:inline">View</span>
+                          <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                          </svg>
+                        </div>
+                      </div>
                     </div>
-                  </li>
-                </ul>
+                  </NuxtLink>
+                </div>
               </div>
             </div>
           </div>
