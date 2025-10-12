@@ -30,33 +30,60 @@
         <div v-else-if="error" class="text-center text-red-600 dark:text-red-400">{{ errorMessage }}</div>
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <NuxtLink 
+          <div 
             v-for="r in restaurants" 
             :key="r.id" 
-            :to="`/restaurant/${r.id}`"
-            class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-3xl shadow hover:shadow-lg transition-all border border-white/20 dark:border-gray-700/20 cursor-pointer block"
+            class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-3xl shadow hover:shadow-lg transition-all border border-white/20 dark:border-gray-700/20"
           >
-            <div class="flex items-center space-x-4">
-              <div class="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-2xl font-bold text-gray-700 dark:text-gray-200">{{ r.name.charAt(0) }}</div>
-              <div>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ r.name }}</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-300">{{ r.cuisine }} · {{ r.location }}</p>
+            <NuxtLink :to="`/restaurant/${r.id}`" class="block">
+              <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-2xl font-bold text-gray-700 dark:text-gray-200">{{ r.name.charAt(0) }}</div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ r.name }}</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-300">{{ r.cuisine }} · {{ r.location }}</p>
+                </div>
               </div>
-            </div>
-            <p class="mt-4 text-sm text-gray-700 dark:text-gray-300">{{ r.description }}</p>
-            <div class="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-              <span>Rating: <strong class="text-gray-900 dark:text-white">{{ r.rating ?? '—' }}</strong></span>
-              <span>{{ r.open ? 'Open' : 'Closed' }}</span>
-            </div>
+              <p class="mt-4 text-sm text-gray-700 dark:text-gray-300">{{ r.description }}</p>
+              <div class="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                <span>Rating: <strong class="text-gray-900 dark:text-white">{{ r.rating ?? '—' }}</strong></span>
+                <span :class="r.open ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">{{ r.open ? 'Open' : 'Closed' }}</span>
+              </div>
+            </NuxtLink>
             
-            <!-- Click indicator -->
-            <div class="mt-4 flex items-center text-indigo-600 dark:text-indigo-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-              <span>View details</span>
-              <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
+            <!-- Action buttons -->
+            <div class="mt-4 flex items-center justify-between">
+              <NuxtLink 
+                :to="`/restaurant/${r.id}`"
+                class="flex items-center text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+              >
+                <span>View details</span>
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </NuxtLink>
+              
+              <NuxtLink 
+                v-if="r.open"
+                :to="`/reserve-${r.id}`"
+                class="inline-flex items-center px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+              >
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Book Table
+              </NuxtLink>
+              
+              <span 
+                v-else
+                class="inline-flex items-center px-3 py-1.5 bg-gray-400 text-white text-sm font-medium rounded-lg cursor-not-allowed"
+              >
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Closed
+              </span>
             </div>
-          </NuxtLink>
+          </div>
         </div>
       </div>
     </div>

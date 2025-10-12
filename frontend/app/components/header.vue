@@ -36,6 +36,7 @@
   <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/restaurants">Restaurants</a>
   <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/contacts">Contact</a>
       <a v-if="isLoggedIn" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/profile">Profile</a>
+      <a v-if="isLoggedIn" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/reservations">My Reservations</a>
       <a v-if="isAdmin" href="/admin" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600">Admin</a>
     </div>
 
@@ -118,6 +119,15 @@
       >
       <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/contacts"
         >Contact</a
+      >
+      <a v-if="isLoggedIn" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/profile"
+        >Profile</a
+      >
+      <a v-if="isLoggedIn" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/reservations"
+        >My Reservations</a
+      >
+      <a v-if="isAdmin" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/admin"
+        >Admin</a
       >
       <div class="border-t border-gray-200 dark:border-gray-700 w-full pt-4">
         <!-- Mobile Theme Toggle -->
