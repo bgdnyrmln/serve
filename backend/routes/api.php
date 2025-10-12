@@ -45,4 +45,5 @@ Route::get('/user', function (Request $request) {
         Route::get('/reservations/{reservation}', [App\Http\Controllers\ReservationController::class, 'show']);
         Route::put('/reservations/{reservation}', [App\Http\Controllers\ReservationController::class, 'update']);
         Route::delete('/reservations/{reservation}', [App\Http\Controllers\ReservationController::class, 'destroy']);
+        Route::get('/reservations/{reservation}/pdf', [App\Http\Controllers\ReservationController::class, 'downloadPdf']);
     });

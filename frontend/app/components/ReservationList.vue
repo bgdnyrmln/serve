@@ -112,26 +112,34 @@
         </div>
 
         <!-- Actions -->
-        <div class="flex space-x-3">
-          <button
-            v-if="reservation.status === 'pending'"
-            @click="editReservation(reservation)"
-            class="flex-1 inline-flex items-center justify-center px-4 py-2 bg-yellow-600 text-white text-sm font-medium rounded-xl hover:bg-yellow-700 focus:outline-none focus:ring-4 focus:ring-yellow-500/50 transition-all duration-200"
-          >
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Edit
-          </button>
+        <div class="space-y-3">
+          <!-- Cancel Button -->
           <button
             v-if="canCancel(reservation)"
             @click="cancelReservation(reservation)"
-            class="flex-1 inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-xl hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500/50 transition-all duration-200"
+            class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-xl hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500/50 transition-all duration-200"
           >
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-            Cancel
+            Cancel Reservation
+          </button>
+          
+          <!-- Download PDF Button (only show for non-cancelled reservations) -->
+          <button
+            v-if="reservation.status !== 'cancelled'"
+            @click="downloadPdf(reservation)"
+            :disabled="downloadingPdf"
+            class="w-full inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <svg v-if="!downloadingPdf" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <svg v-else class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {{ downloadingPdf ? 'Generating PDF...' : 'Download PDF' }}
           </button>
         </div>
       </div>
@@ -184,6 +192,7 @@ const loading = ref(true)
 const message = ref('')
 const messageType = ref<'success' | 'error'>('success')
 const mounted = ref(false)
+const downloadingPdf = ref(false)
 
 onMounted(() => {
   mounted.value = true
@@ -272,13 +281,6 @@ const canCancel = (reservation: Reservation) => {
   return ['pending', 'confirmed'].includes(reservation.status)
 }
 
-const editReservation = (reservation: Reservation) => {
-  // TODO: Implement edit functionality
-  console.log('Edit reservation:', reservation)
-  message.value = 'Edit functionality will be implemented soon!'
-  messageType.value = 'success'
-}
-
 const cancelReservation = async (reservation: Reservation) => {
   if (!confirm('Are you sure you want to cancel this reservation?')) {
     return
@@ -300,6 +302,38 @@ const cancelReservation = async (reservation: Reservation) => {
   } catch (error: any) {
     message.value = error.data?.message || 'Failed to cancel reservation'
     messageType.value = 'error'
+  }
+}
+
+const downloadPdf = async (reservation: Reservation) => {
+  downloadingPdf.value = true
+  try {
+    // Use the same authentication method as other API calls
+    const response = await useSanctumFetch(`/api/reservations/${reservation.id}/pdf`, {
+      method: 'GET',
+      responseType: 'blob'
+    }) as Blob
+
+    // Create download link
+    const url = window.URL.createObjectURL(response)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `reservation-${reservation.id}-${new Date().toISOString().split('T')[0]}.pdf`
+    document.body.appendChild(link)
+    link.click()
+    
+    // Cleanup
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    message.value = 'PDF downloaded successfully!'
+    messageType.value = 'success'
+  } catch (error: any) {
+    console.error('PDF download error:', error)
+    message.value = error.data?.message || 'Failed to download PDF'
+    messageType.value = 'error'
+  } finally {
+    downloadingPdf.value = false
   }
 }
 

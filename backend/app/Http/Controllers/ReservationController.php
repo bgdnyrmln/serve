@@ -7,6 +7,7 @@ use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use PDF;
 
 class ReservationController extends Controller
 {
@@ -209,5 +210,24 @@ class ReservationController extends Controller
         return response()->json([
             'available_slots' => $availableSlots
         ]);
+    }
+
+    /**
+     * Download reservation as PDF.
+     */
+    public function downloadPdf(Reservation $reservation)
+    {
+        // Ensure user can only download their own reservations
+        if ($reservation->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $reservation->load('restaurant', 'user');
+
+        $pdf = PDF::loadView('pdf.reservation', compact('reservation'));
+        
+        $filename = 'reservation-' . $reservation->id . '-' . date('Y-m-d') . '.pdf';
+        
+        return $pdf->download($filename);
     }
 }
