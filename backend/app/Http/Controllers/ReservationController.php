@@ -7,7 +7,7 @@ use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReservationController extends Controller
 {
@@ -124,7 +124,7 @@ class ReservationController extends Controller
 
         $reservation->update($request->only([
             'reservation_date',
-            'reservation_time', 
+            'reservation_time',
             'party_size',
             'special_requests',
             'contact_phone',
@@ -171,7 +171,7 @@ class ReservationController extends Controller
         $request->validate([
             'date' => 'required|date|after_or_equal:today'
         ]);
-        
+
         if (!$restaurant->open) {
             return response()->json([
                 'available_slots' => [],
@@ -225,9 +225,9 @@ class ReservationController extends Controller
         $reservation->load('restaurant', 'user');
 
         $pdf = PDF::loadView('pdf.reservation', compact('reservation'));
-        
+
         $filename = 'reservation-' . $reservation->id . '-' . date('Y-m-d') . '.pdf';
-        
+
         return $pdf->download($filename);
     }
 }

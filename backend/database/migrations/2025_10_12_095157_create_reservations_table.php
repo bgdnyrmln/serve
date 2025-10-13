@@ -26,9 +26,9 @@ return new class extends Migration
 
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            
+
             // Index for faster queries
-            $table->index(['restaurant_id', 'reservation_date', 'reservation_time']);
+            $table->index(['restaurant_id', 'reservation_date', 'reservation_time'], 'res_restaurant_date_time_idx');
         });
     }
 
