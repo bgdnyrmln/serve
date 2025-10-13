@@ -37,5 +37,17 @@ Route::get('/user', function (Request $request) {
 
 
     // Reviews
-    Route::get('/restaurants/{restaurant}/reviews', [ReviewController::class, 'index']);
-    Route::post('/restaurants/{restaurant}/reviews', [ReviewController::class, 'store'])->middleware('auth:sanctum');
+    Route::get('/restaurants/{restaurant}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'index']);
+    Route::post('/restaurants/{restaurant}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'store'])->middleware('auth:sanctum');
+
+    // Reservations
+    Route::get('/restaurants/{restaurant}/available-slots', [App\Http\Controllers\ReservationController::class, 'availableTimeSlots']);
+    
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/reservations', [App\Http\Controllers\ReservationController::class, 'index']);
+        Route::post('/reservations', [App\Http\Controllers\ReservationController::class, 'store']);
+        Route::get('/reservations/{reservation}', [App\Http\Controllers\ReservationController::class, 'show']);
+        Route::put('/reservations/{reservation}', [App\Http\Controllers\ReservationController::class, 'update']);
+        Route::delete('/reservations/{reservation}', [App\Http\Controllers\ReservationController::class, 'destroy']);
+        Route::get('/reservations/{reservation}/pdf', [App\Http\Controllers\ReservationController::class, 'downloadPdf']);
+    });
