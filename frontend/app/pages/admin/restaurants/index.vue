@@ -15,11 +15,22 @@
                 <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Name</th>
                 <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Cuisine</th>
                 <th class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">Owner</th>
+                <th>
+                    <div class="px-4 py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-300">
+                        <!-- Placeholder for search input -->
+                        <input 
+                            type="text" 
+                            placeholder="Search..." 
+                            class="w-full bg-gray-100 dark:bg-gray-700 px-3 py-1 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500" 
+                            v-model="searchQuery"
+                        />
+                    </div>
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="restaurant in restaurants"
+                v-for="restaurant in filteredRestaurants"
                 :key="restaurant.id"
                 class="border-t hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
               >
@@ -33,11 +44,9 @@
                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
                     >Edit</a
                   >
-                </td>
-                <td class="px-4 py-2 text-sm text-gray-700">
                   <button
                     @click="deleteRestaurant(restaurant.id)"
-                    class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+                    class="ml-4 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
                   >Delete</button>
                 </td>
               </tr>
@@ -50,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 
 definePageMeta({
@@ -59,15 +68,28 @@ definePageMeta({
 
 const restaurants = ref([])
 const loading = ref(true)
+const searchQuery = ref('')
 
+// Computed property for filtered results
+const filteredRestaurants = computed(() => {
+  if (!searchQuery.value) return restaurants.value
+  const q = searchQuery.value.toLowerCase()
+  return restaurants.value.filter(r =>
+    String(r.id).includes(q) ||
+    r.name.toLowerCase().includes(q) ||
+    r.cuisine.toLowerCase().includes(q) ||
+    (r.owner_name && r.owner_name.toLowerCase().includes(q))
+  )
+})
 
+// Fetch data on mount
 onMounted(async () => {
   try {
     const response = await axios.get('http://localhost:8000/api/restaurants', { withCredentials: true })
-    restaurants.value = response.data
-    restaurants.value.forEach(r => {
-      r.owner_name = r.owner ? (r.owner.first_name + ' ' + r.owner.last_name) : 'N/A'
-    })
+    restaurants.value = response.data.map(r => ({
+      ...r,
+      owner_name: r.owner ? `${r.owner.first_name} ${r.owner.last_name}` : 'N/A'
+    }))
   } catch (error) {
     console.error('Error fetching restaurants:', error)
   } finally {
@@ -75,29 +97,26 @@ onMounted(async () => {
   }
 })
 
-
+// Delete function
 const deleteRestaurant = async (restaurantId) => {
   const token = decodeURIComponent(
-      document.cookie
-        .split('; ')
-        .find((row) => row.startsWith("XSRF-TOKEN="))
-        ?.split("=")[1] ?? ''
-    )
-  if (!confirm('Are you sure you want to delete this restaurant?')) {
-    return
-  }
+    document.cookie
+      .split('; ')
+      .find((row) => row.startsWith("XSRF-TOKEN="))
+      ?.split("=")[1] ?? ''
+  )
+
+  if (!confirm('Are you sure you want to delete this restaurant?')) return
+
   try {
     await axios.delete(`http://localhost:8000/api/restaurants/${restaurantId}`, {
       withCredentials: true,
       headers: { 'X-XSRF-TOKEN': token }
     })
-    restaurants.value = restaurants.value.filter(restaurant => restaurant.id !== restaurantId)
+    restaurants.value = restaurants.value.filter(r => r.id !== restaurantId)
   } catch (error) {
     console.error('Error deleting restaurant:', error)
     alert('Failed to delete restaurant. Please try again.')
   }
 }
-
-
-
 </script>

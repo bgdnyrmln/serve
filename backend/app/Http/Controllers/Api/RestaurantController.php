@@ -62,4 +62,20 @@ class RestaurantController extends Controller
             ], 500);
         }
     }
+
+    public function update(Request $request, Restaurant $restaurant)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'cuisine' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'rating' => 'nullable|numeric|min:0|max:5',
+            'open' => 'nullable|boolean',
+        ]);
+
+        $restaurant->update($data);
+
+        return response()->json($restaurant);
+    }
 }

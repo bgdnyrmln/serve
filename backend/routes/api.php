@@ -34,6 +34,8 @@ Route::get('/user', function (Request $request) {
     Route::get('/restaurants/{restaurant}', [RestaurantController::class, 'show']);
     Route::post('/restaurants', [RestaurantController::class, 'store'])->middleware('auth:sanctum');
     Route::delete('/restaurants/{restaurant}', [RestaurantController::class, 'destroy'])->middleware('auth:sanctum');
+    Route::put('/restaurants/{restaurant}', [RestaurantController::class, 'update'])->middleware('auth:sanctum');
+
 
 
     // Reviews
@@ -42,7 +44,7 @@ Route::get('/user', function (Request $request) {
 
     // Reservations
     Route::get('/restaurants/{restaurant}/available-slots', [App\Http\Controllers\ReservationController::class, 'availableTimeSlots']);
-    
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/reservations', [App\Http\Controllers\ReservationController::class, 'index']);
         Route::post('/reservations', [App\Http\Controllers\ReservationController::class, 'store']);
