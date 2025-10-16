@@ -25,9 +25,11 @@ Prerequisites
 Quick start (recommended)
 1. Clone the repository (already in your workspace):
 
+```bash
    git clone <repo-url>
-
+```
 2. Backend — Laravel
+
 
 - Change to the backend folder and install PHP dependencies:
 
