@@ -26,7 +26,7 @@ Quick start (recommended)
 1. Clone the repository (already in your workspace):
 
 ```bash
-   git clone <repo-url>
+   git clone github.com/bgdnyrmln/serve
 ```
 2. Backend — Laravel
 
