@@ -36,6 +36,7 @@
   <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/restaurants">Restaurants</a>
   <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/contacts">Contact</a>
       <a v-if="isLoggedIn" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/profile">Profile</a>
+      <a v-if="isLoggedIn" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/reservations">My Reservations</a>
       <a v-if="isAdmin" href="/admin" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600">Admin</a>
     </div>
 
@@ -53,12 +54,11 @@
         class="text-white bg-indigo-600 px-4 py-2 rounded-md shadow-sm hover:opacity-95"
         >Register</a
       >
-      <a
+      <button
         v-if="isLoggedIn"
         @click="logout"
-        class="text-white bg-indigo-600 px-4 py-2 rounded-md shadow-sm hover:opacity-95"
-      >Logout</a
-      >
+        class="text-white bg-indigo-600 px-4 py-2 rounded-md shadow-sm hover:opacity-95 cursor-pointer transition-all duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+      >Logout</button>
 
       <!-- Theme Toggle -->
       <button
@@ -119,6 +119,15 @@
       <a class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/contacts"
         >Contact</a
       >
+      <a v-if="isLoggedIn" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/profile"
+        >Profile</a
+      >
+      <a v-if="isLoggedIn" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/reservations"
+        >My Reservations</a
+      >
+      <a v-if="isAdmin" class="text-sm text-gray-500 dark:text-gray-300 hover:text-indigo-600" href="/admin"
+        >Admin</a
+      >
       <div class="border-t border-gray-200 dark:border-gray-700 w-full pt-4">
         <!-- Mobile Theme Toggle -->
         <button
@@ -143,13 +152,11 @@
           class="block w-full text-center text-white bg-indigo-600 px-4 py-2 rounded-md shadow-sm hover:opacity-95 mt-2"
           >Register</a
         >
-        <a
+        <button
           v-if="isLoggedIn"
           @click="logout"
-          class="block w-full text-center text-white bg-indigo-600 px-4 py-2 rounded-md shadow-sm hover:opacity-95"
-          >Logout</a
-        >
-        
+          class="block w-full text-center text-white bg-indigo-600 px-4 py-2 rounded-md shadow-sm hover:opacity-95 cursor-pointer transition-all duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >Logout</button>
       </div>
     </div>
   </nav>

@@ -42,4 +42,24 @@ class RestaurantController extends Controller
 
         return response()->json($restaurant, 201);
     }
+
+
+    public function destroy($id)
+    {
+        $restaurant = Restaurant::find($id);
+
+        if (!$restaurant) {
+            return response()->json(['message' => 'Restaurant not found'], 404);
+        }
+
+        try {
+            $restaurant->delete();
+            return response()->json(['message' => 'Restaurant deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error deleting restaurant',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

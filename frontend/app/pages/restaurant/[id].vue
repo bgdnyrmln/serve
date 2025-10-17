@@ -147,6 +147,34 @@
         </div>
       </div>
 
+      <!-- Reservation Section -->
+      <div v-if="restaurant" class="mt-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 dark:border-gray-700/20 overflow-hidden">
+        <div class="px-8 py-8 text-center">
+          <div v-if="restaurant.open">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Ready to dine with us?</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Reserve your table now and enjoy an amazing dining experience.</p>
+            <NuxtLink 
+              :to="`/reserve-${restaurant.id}`"
+              class="inline-flex items-center px-8 py-4 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            >
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Make a Reservation
+            </NuxtLink>
+          </div>
+          <div v-else>
+            <div class="text-gray-400 mb-4">
+              <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Restaurant Closed</h3>
+            <p class="text-gray-600 dark:text-gray-300">This restaurant is currently closed and not accepting reservations.</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Reviews Section -->
       <div v-if="restaurant" class="mt-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 dark:border-gray-700/20 overflow-hidden">
         <div class="px-8 py-8">
@@ -205,6 +233,26 @@
 
           <!-- Existing Reviews -->
           <div>
+            <!-- Filter Section -->
+            <div v-if="reviews.length > 0" class="mb-6">
+              <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3">
+                <span class="text-sm text-gray-600 dark:text-gray-400">{{ reviews.length }} Review{{ reviews.length !== 1 ? 's' : '' }}</span>
+                <div class="flex gap-2">
+                  <button
+                    v-for="filter in filterOptions"
+                    :key="filter.value"
+                    @click="currentFilter = filter.value"
+                    class="px-3 py-1.5 text-sm rounded-lg transition-all duration-200"
+                    :class="currentFilter === filter.value 
+                      ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-medium'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'"
+                  >
+                    {{ filter.label }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div v-if="loadingReviews" class="text-center py-8">
               <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-500"></div>
               <p class="mt-2 text-gray-600 dark:text-gray-300">Loading reviews...</p>
@@ -216,7 +264,7 @@
 
             <div v-else class="space-y-6">
               <div
-                v-for="review in reviews"
+                v-for="review in filteredReviews"
                 :key="review.id"
                 class="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
               >
@@ -288,6 +336,33 @@ const submittingReview = ref(false)
 const reviewError = ref(false)
 const reviewErrorMessage = ref('')
 const reviewSuccess = ref(false)
+
+// Filter state
+const currentFilter = ref('newest')
+const filterOptions = [
+  { label: 'Newest', value: 'newest' },
+  { label: 'Oldest', value: 'oldest' },
+  { label: 'Highest', value: 'highest' },
+  { label: 'Lowest', value: 'lowest' }
+]
+
+// Computed property for filtered reviews
+const filteredReviews = computed(() => {
+  let sorted = [...reviews.value]
+  
+  switch (currentFilter.value) {
+    case 'newest':
+      return sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    case 'oldest':
+      return sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    case 'highest':
+      return sorted.sort((a, b) => b.rating - a.rating)
+    case 'lowest':
+      return sorted.sort((a, b) => a.rating - b.rating)
+    default:
+      return sorted
+  }
+})
 
 const fetchRestaurant = async () => {
   const id = route.params.id

@@ -13,8 +13,8 @@
         <a href="#" class="block px-4 py-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400">
           Reservations
         </a>
-        <a href="#" class="block px-4 py-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400">
-          Tables
+        <a href="/admin/restaurants" class="block px-4 py-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400">
+          Restaurants
         </a>
         <a href="#" class="block px-4 py-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400">
           Customers
