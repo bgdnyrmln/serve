@@ -26,62 +26,90 @@
             />
           </div>
         </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex justify-center mb-8">
+          <div class="inline-flex p-1 space-x-1 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-700/50">
+            <button
+              v-for="option in filterOptions"
+              :key="option.id"
+              @click="activeFilter = option.id"
+              class="flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+              :class="activeFilter === option.id 
+                ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'"
+            >
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="{{ option.icon }}" />
+              </svg>
+              {{ option.label }}
+            </button>
+          </div>
+        </div>
+
         <div v-if="loading" class="text-center text-gray-700 dark:text-gray-300">Loading restaurants…</div>
         <div v-else-if="error" class="text-center text-red-600 dark:text-red-400">{{ errorMessage }}</div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div 
-            v-for="r in restaurants" 
-            :key="r.id" 
-            class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-3xl shadow hover:shadow-lg transition-all border border-white/20 dark:border-gray-700/20"
-          >
-            <NuxtLink :to="`/restaurant/${r.id}`" class="block">
-              <div class="flex items-center space-x-4">
-                <div class="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-2xl font-bold text-gray-700 dark:text-gray-200">{{ r.name.charAt(0) }}</div>
-                <div>
-                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ r.name }}</h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-300">{{ r.cuisine }} · {{ r.location }}</p>
+        <div v-else>
+          <!-- Results count -->
+          <p class="text-center mb-6 text-sm text-gray-600 dark:text-gray-400">
+            {{ filteredRestaurants.length }} restaurant{{ filteredRestaurants.length !== 1 ? 's' : '' }} found
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div 
+              v-for="r in filteredRestaurants" 
+              :key="r.id" 
+              class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-3xl shadow hover:shadow-lg transition-all border border-white/20 dark:border-gray-700/20"
+            >
+              <NuxtLink :to="`/restaurant/${r.id}`" class="block">
+                <div class="flex items-center space-x-4">
+                  <div class="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-2xl font-bold text-gray-700 dark:text-gray-200">{{ r.name.charAt(0) }}</div>
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ r.name }}</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">{{ r.cuisine }} · {{ r.location }}</p>
+                  </div>
                 </div>
-              </div>
-              <p class="mt-4 text-sm text-gray-700 dark:text-gray-300">{{ r.description }}</p>
-              <div class="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                <span>Rating: <strong class="text-gray-900 dark:text-white">{{ r.rating ?? '—' }}</strong></span>
-                <span :class="r.open ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">{{ r.open ? 'Open' : 'Closed' }}</span>
-              </div>
-            </NuxtLink>
-            
-            <!-- Action buttons -->
-            <div class="mt-4 flex items-center justify-between">
-              <NuxtLink 
-                :to="`/restaurant/${r.id}`"
-                class="flex items-center text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
-              >
-                <span>View details</span>
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
+                <p class="mt-4 text-sm text-gray-700 dark:text-gray-300">{{ r.description }}</p>
+                <div class="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                  <span>Rating: <strong class="text-gray-900 dark:text-white">{{ r.rating ?? '—' }}</strong></span>
+                  <span :class="r.open ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">{{ r.open ? 'Open' : 'Closed' }}</span>
+                </div>
               </NuxtLink>
               
-              <NuxtLink 
-                v-if="r.open"
-                :to="`/reserve-${r.id}`"
-                class="inline-flex items-center px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-              >
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                Book Table
-              </NuxtLink>
-              
-              <span 
-                v-else
-                class="inline-flex items-center px-3 py-1.5 bg-gray-400 text-white text-sm font-medium rounded-lg cursor-not-allowed"
-              >
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Closed
-              </span>
+              <!-- Action buttons -->
+              <div class="mt-4 flex items-center justify-between">
+                <NuxtLink 
+                  :to="`/restaurant/${r.id}`"
+                  class="flex items-center text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+                >
+                  <span>View details</span>
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </NuxtLink>
+                
+                <NuxtLink 
+                  v-if="r.open"
+                  :to="`/reserve-${r.id}`"
+                  class="inline-flex items-center px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                >
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Book Table
+                </NuxtLink>
+                
+                <span 
+                  v-else
+                  class="inline-flex items-center px-3 py-1.5 bg-gray-400 text-white text-sm font-medium rounded-lg cursor-not-allowed"
+                >
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Closed
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -91,13 +119,41 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 
 const restaurants = ref([]);
 const loading = ref(true);
 const error = ref(false);
 const errorMessage = ref('');
 const searchQuery = ref('');
+const activeFilter = ref('all');
+
+// Sort options
+const filterOptions = [
+  { id: 'all', label: 'All', icon: 'M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414v6.586a1 1 0 01-1.414.914l-3-1.5a1 1 0 01-.586-.914v-5.086l-6.414-6.414a1 1 0 01-.293-.707v-2.586z' },
+  { id: 'newest', label: 'New Added', icon: 'M9.752 6.193c.599.6 1.73.437 2.528-.362.798-.799.96-1.932.362-2.531-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532z' },
+  { id: 'highest', label: 'Highest Rating', icon: 'M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' },
+  { id: 'lowest', label: 'Lowest Rating', icon: 'M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' }
+];
+
+// Filtered and sorted restaurants
+const filteredRestaurants = computed(() => {
+  let result = [...restaurants.value];
+  
+  switch (activeFilter.value) {
+    case 'newest':
+      result.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      break;
+    case 'highest':
+      result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      break;
+    case 'lowest':
+      result.sort((a, b) => (a.rating || 0) - (b.rating || 0));
+      break;
+  }
+  
+  return result;
+});
 
 const sample = [
   { 

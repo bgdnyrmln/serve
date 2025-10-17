@@ -239,10 +239,10 @@ const formatTime = (time: string) => {
 
 const getStatusColor = (status: string) => {
   const colors = {
-    pending: 'border-l-4 border-yellow-400',
-    confirmed: 'border-l-4 border-green-400',
-    cancelled: 'border-l-4 border-red-400',
-    completed: 'border-l-4 border-blue-400'
+    pending: 'border-l-4 border-gray-400',
+    confirmed: 'border-l-4 border-gray-500',
+    cancelled: 'border-l-4 border-gray-300',
+    completed: 'border-l-4 border-gray-600'
   }
   return colors[status as keyof typeof colors] || 'border-l-4 border-gray-400'
 }

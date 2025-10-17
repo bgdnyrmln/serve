@@ -233,6 +233,26 @@
 
           <!-- Existing Reviews -->
           <div>
+            <!-- Filter Section -->
+            <div v-if="reviews.length > 0" class="mb-6">
+              <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3">
+                <span class="text-sm text-gray-600 dark:text-gray-400">{{ reviews.length }} Review{{ reviews.length !== 1 ? 's' : '' }}</span>
+                <div class="flex gap-2">
+                  <button
+                    v-for="filter in filterOptions"
+                    :key="filter.value"
+                    @click="currentFilter = filter.value"
+                    class="px-3 py-1.5 text-sm rounded-lg transition-all duration-200"
+                    :class="currentFilter === filter.value 
+                      ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-medium'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'"
+                  >
+                    {{ filter.label }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div v-if="loadingReviews" class="text-center py-8">
               <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-500"></div>
               <p class="mt-2 text-gray-600 dark:text-gray-300">Loading reviews...</p>
@@ -244,7 +264,7 @@
 
             <div v-else class="space-y-6">
               <div
-                v-for="review in reviews"
+                v-for="review in filteredReviews"
                 :key="review.id"
                 class="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
               >
@@ -316,6 +336,33 @@ const submittingReview = ref(false)
 const reviewError = ref(false)
 const reviewErrorMessage = ref('')
 const reviewSuccess = ref(false)
+
+// Filter state
+const currentFilter = ref('newest')
+const filterOptions = [
+  { label: 'Newest', value: 'newest' },
+  { label: 'Oldest', value: 'oldest' },
+  { label: 'Highest', value: 'highest' },
+  { label: 'Lowest', value: 'lowest' }
+]
+
+// Computed property for filtered reviews
+const filteredReviews = computed(() => {
+  let sorted = [...reviews.value]
+  
+  switch (currentFilter.value) {
+    case 'newest':
+      return sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    case 'oldest':
+      return sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    case 'highest':
+      return sorted.sort((a, b) => b.rating - a.rating)
+    case 'lowest':
+      return sorted.sort((a, b) => a.rating - b.rating)
+    default:
+      return sorted
+  }
+})
 
 const fetchRestaurant = async () => {
   const id = route.params.id
