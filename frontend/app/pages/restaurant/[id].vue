@@ -267,6 +267,12 @@ const isOwner = computed(() => {
                 </svg>
               </button>
             </div>
+
+            <!-- Error message -->
+            <div v-if="actionError" class="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+              <p class="text-sm text-red-600 dark:text-red-400">{{ actionError }}</p>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4">
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Guest Name</p>
@@ -302,6 +308,34 @@ const isOwner = computed(() => {
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Special Requests</p>
                 <p class="font-medium text-gray-900 dark:text-white">{{ selectedReservation.special_requests }}</p>
               </div>
+              <div v-if="selectedReservation.cancellation_reason" class="md:col-span-2 bg-red-50/60 dark:bg-red-900/20 backdrop-blur-sm rounded-xl p-4 border border-red-200 dark:border-red-800/50">
+                <p class="text-sm text-red-600 dark:text-red-400 mb-1 font-semibold">Cancellation Reason</p>
+                <p class="font-medium text-red-800 dark:text-red-200">{{ selectedReservation.cancellation_reason }}</p>
+              </div>
+            </div>
+
+            <!-- Action buttons for pending reservations -->
+            <div v-if="selectedReservation.status === 'pending'" class="mt-6 flex gap-3">
+              <button
+                @click="acceptReservation(selectedReservation)"
+                :disabled="actionLoading"
+                class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                {{ actionLoading ? 'Processing...' : 'Accept Reservation' }}
+              </button>
+              <button
+                @click="openDeclineModal(selectedReservation)"
+                :disabled="actionLoading"
+                class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-4 focus:ring-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                {{ actionLoading ? 'Processing...' : 'Decline Reservation' }}
+              </button>
             </div>
           </div>
         </div>
@@ -445,6 +479,88 @@ const isOwner = computed(() => {
         </div>
       </div>
     </div>
+
+    <!-- Decline Reservation Modal -->
+    <div v-if="showDeclineModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true" @click="closeDeclineModal"></div>
+
+        <!-- Center modal -->
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+        <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div class="bg-white dark:bg-gray-800 px-6 pt-6 pb-4">
+            <div class="flex items-start">
+              <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 sm:mx-0 sm:h-10 sm:w-10">
+                <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </div>
+              <div class="ml-4 flex-1">
+                <h3 class="text-lg leading-6 font-semibold text-gray-900 dark:text-white" id="modal-title">
+                  Decline Reservation
+                </h3>
+                <div class="mt-2">
+                  <p class="text-sm text-gray-600 dark:text-gray-300">
+                    Please provide a reason for declining this reservation. The guest will be notified with your explanation.
+                  </p>
+                </div>
+              </div>
+              <button
+                @click="closeDeclineModal"
+                class="ml-4 text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Form -->
+            <div class="mt-4">
+              <label for="decline-reason" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Reason for declining <span class="text-red-500">*</span>
+              </label>
+              <textarea
+                id="decline-reason"
+                v-model="declineReason"
+                rows="4"
+                placeholder="e.g., We are fully booked for that time slot, or we have a private event scheduled..."
+                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                :class="{ 'border-red-500': actionError }"
+              ></textarea>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Minimum 10 characters required
+              </p>
+              
+              <!-- Error message -->
+              <div v-if="actionError" class="mt-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                <p class="text-sm text-red-600 dark:text-red-400">{{ actionError }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+            <button
+              @click="closeDeclineModal"
+              :disabled="actionLoading"
+              class="w-full sm:w-auto px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              @click="declineReservation"
+              :disabled="actionLoading || !declineReason || declineReason.trim().length < 10"
+              class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              {{ actionLoading ? 'Declining...' : 'Decline Reservation' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -488,6 +604,12 @@ const loadingUser = ref(true)
 const reservations = ref([])
 const loadingReservations = ref(false)
 const selectedReservation = ref(null)
+
+// Actions state
+const showDeclineModal = ref(false)
+const declineReason = ref('')
+const actionLoading = ref(false)
+const actionError = ref('')
 
 // Computed property for calendar events
 const calendarEvents = computed(() => {
@@ -702,6 +824,83 @@ const formatReviewDate = (dateString) => {
     })
   } catch {
     return ''
+  }
+}
+
+// Accept reservation
+const acceptReservation = async (reservation) => {
+  if (!confirm('Are you sure you want to accept this reservation?')) return
+
+  try {
+    actionLoading.value = true
+    actionError.value = ''
+    
+    await useSanctumFetch(`/api/reservations/${reservation.id}/accept`, {
+      method: 'POST'
+    })
+
+    // Reload reservations
+    await fetchReservations()
+    
+    // Clear selection if it was the accepted reservation
+    if (selectedReservation.value?.id === reservation.id) {
+      selectedReservation.value = null
+    }
+
+  } catch (err) {
+    actionError.value = err?.data?.message || err?.message || 'Failed to accept reservation'
+    setTimeout(() => {
+      actionError.value = ''
+    }, 5000)
+  } finally {
+    actionLoading.value = false
+  }
+}
+
+// Show decline modal
+const openDeclineModal = (reservation) => {
+  selectedReservation.value = reservation
+  showDeclineModal.value = true
+  declineReason.value = ''
+  actionError.value = ''
+}
+
+// Close decline modal
+const closeDeclineModal = () => {
+  showDeclineModal.value = false
+  declineReason.value = ''
+  actionError.value = ''
+}
+
+// Decline reservation
+const declineReservation = async () => {
+  if (!declineReason.value || declineReason.value.trim().length < 10) {
+    actionError.value = 'Please provide a reason of at least 10 characters'
+    return
+  }
+
+  try {
+    actionLoading.value = true
+    actionError.value = ''
+    
+    await useSanctumFetch(`/api/reservations/${selectedReservation.value.id}/decline`, {
+      method: 'POST',
+      body: {
+        cancellation_reason: declineReason.value
+      }
+    })
+
+    // Reload reservations
+    await fetchReservations()
+    
+    // Close modal and clear selection
+    closeDeclineModal()
+    selectedReservation.value = null
+
+  } catch (err) {
+    actionError.value = err?.data?.message || err?.message || 'Failed to decline reservation'
+  } finally {
+    actionLoading.value = false
   }
 }
 

@@ -51,4 +51,7 @@ Route::get('/user', function (Request $request) {
         Route::delete('/reservations/{reservation}', [App\Http\Controllers\ReservationController::class, 'destroy']);
         Route::get('/reservations/{reservation}/pdf', [App\Http\Controllers\ReservationController::class, 'downloadPdf']);
         Route::get('/restaurants/{restaurant}/reservations', [App\Http\Controllers\ReservationController::class, 'restaurantReservations']);
+        
+        Route::post('/reservations/{reservation}/accept', [App\Http\Controllers\ReservationController::class, 'accept']);
+        Route::post('/reservations/{reservation}/decline', [App\Http\Controllers\ReservationController::class, 'decline']);
     });

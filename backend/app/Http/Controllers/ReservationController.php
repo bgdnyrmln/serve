@@ -242,4 +242,79 @@ class ReservationController extends Controller
 
         return $pdf->download($filename);
     }
+
+    /**
+     * Accept a reservation (restaurant owner only).
+     */
+    public function accept(Reservation $reservation)
+    {
+        $user = Auth::user();
+        $restaurant = $reservation->restaurant;
+
+        // Check if user is the owner of the restaurant
+        if ($restaurant->owner_id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized. Only the restaurant owner can accept reservations.'], 403);
+        }
+
+        // Check if reservation is in pending status
+        if ($reservation->status !== 'pending') {
+            return response()->json([
+                'message' => 'Only pending reservations can be accepted.'
+            ], 422);
+        }
+
+        $reservation->update([
+            'status' => 'confirmed',
+            'cancellation_reason' => null // Clear any previous cancellation reason
+        ]);
+
+        $reservation->load('user');
+
+        return response()->json([
+            'message' => 'Reservation accepted successfully!',
+            'reservation' => $reservation
+        ]);
+    }
+
+    /**
+     * Decline a reservation (restaurant owner only).
+     */
+    public function decline(Request $request, Reservation $reservation)
+    {
+        $user = Auth::user();
+        $restaurant = $reservation->restaurant;
+
+        // Check if user is the owner of the restaurant
+        if ($restaurant->owner_id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized. Only the restaurant owner can decline reservations.'], 403);
+        }
+
+        // Check if reservation is in pending status
+        if ($reservation->status !== 'pending') {
+            return response()->json([
+                'message' => 'Only pending reservations can be declined.'
+            ], 422);
+        }
+
+        // Validate the decline reason
+        $request->validate([
+            'cancellation_reason' => 'required|string|min:10|max:500'
+        ], [
+            'cancellation_reason.required' => 'Please provide a reason for declining this reservation.',
+            'cancellation_reason.min' => 'The reason must be at least 10 characters.',
+            'cancellation_reason.max' => 'The reason cannot exceed 500 characters.'
+        ]);
+
+        $reservation->update([
+            'status' => 'cancelled',
+            'cancellation_reason' => $request->cancellation_reason
+        ]);
+
+        $reservation->load('user');
+
+        return response()->json([
+            'message' => 'Reservation declined.',
+            'reservation' => $reservation
+        ]);
+    }
 }

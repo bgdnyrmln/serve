@@ -18,7 +18,8 @@ class Reservation extends Model
         'status',
         'special_requests',
         'contact_phone',
-        'contact_email'
+        'contact_email',
+        'cancellation_reason'
     ];
 
     protected $casts = [
