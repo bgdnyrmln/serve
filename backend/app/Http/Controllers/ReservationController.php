@@ -12,6 +12,18 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class ReservationController extends Controller
 {
     /**
+     * Display all reservations for a restaurant (owner only).
+     */
+    public function restaurantReservations(Restaurant $restaurant)
+    {
+        $user = Auth::user();
+        if ($restaurant->owner_id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        $reservations = $restaurant->reservations()->with('user')->orderBy('reservation_date', 'desc')->orderBy('reservation_time', 'desc')->get();
+        return response()->json($reservations);
+    }
+    /**
      * Display a listing of the user's reservations.
      */
     public function index()

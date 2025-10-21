@@ -1,3 +1,20 @@
+// Fetch current user
+const fetchUser = async () => {
+  try {
+    loadingUser.value = true
+    const data = await useSanctumFetch('/api/user')
+    user.value = data
+  } catch (err) {
+    user.value = null
+  } finally {
+    loadingUser.value = false
+  }
+}
+
+// Owner detection
+const isOwner = computed(() => {
+  return user.value && restaurant.value && user.value.id === restaurant.value.owner_id
+})
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900 pt-32 pb-16 px-6 relative overflow-hidden">
     <!-- Background decorations -->
@@ -147,8 +164,8 @@
         </div>
       </div>
 
-      <!-- Reservation Section -->
-      <div v-if="restaurant" class="mt-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 dark:border-gray-700/20 overflow-hidden">
+      <!-- Reservation Section (non-owner) -->
+      <div v-if="restaurant && !isOwner" class="mt-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 dark:border-gray-700/20 overflow-hidden">
         <div class="px-8 py-8 text-center">
           <div v-if="restaurant.open">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Ready to dine with us?</h2>
@@ -175,8 +192,123 @@
         </div>
       </div>
 
-      <!-- Reviews Section -->
-      <div v-if="restaurant" class="mt-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 dark:border-gray-700/20 overflow-hidden">
+      <!-- Owner Calendar View -->
+      <div v-if="restaurant && isOwner" class="mt-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 dark:border-gray-700/20 overflow-hidden">
+        <div class="px-8 py-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Restaurant Reservations</h2>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2 text-sm">
+                <div class="flex items-center gap-1">
+                  <div class="w-3 h-3 rounded-full bg-gradient-to-br from-green-400 to-green-600"></div>
+                  <span class="text-gray-600 dark:text-gray-300">Confirmed</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <div class="w-3 h-3 rounded-full bg-gradient-to-br from-amber-400 to-amber-600"></div>
+                  <span class="text-gray-600 dark:text-gray-300">Pending</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <div class="w-3 h-3 rounded-full bg-gradient-to-br from-red-400 to-red-600"></div>
+                  <span class="text-gray-600 dark:text-gray-300">Cancelled</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Loading state -->
+          <div v-if="loadingReservations" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+            <p class="mt-4 text-gray-600 dark:text-gray-300">Loading reservations...</p>
+          </div>
+
+          <!-- No reservations state -->
+          <div v-else-if="!reservations || reservations.length === 0" class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <p class="mt-4 text-gray-600 dark:text-gray-300">No reservations yet</p>
+          </div>
+
+          <!-- Calendar -->
+          <div v-else class="rounded-2xl overflow-hidden shadow-lg border border-indigo-200 dark:border-indigo-700/50">
+            <ClientOnly>
+              <VueCal
+                :events="calendarEvents"
+                :time-from="9 * 60"
+                :time-to="22 * 60"
+                :disable-views="['years', 'year']"
+                active-view="month"
+                :on-event-click="onEventClick"
+                :editable-events="false"
+                :twelve-hour="false"
+                style="height: 650px"
+                class="vuecal--custom"
+              >
+                <template #event="{ event }">
+                  <div class="vuecal__event-content">
+                    <div class="font-semibold text-sm">{{ event.title }}</div>
+                    <div class="text-xs opacity-90">{{ event.content }}</div>
+                  </div>
+                </template>
+              </VueCal>
+            </ClientOnly>
+          </div>
+
+          <!-- Selected Reservation Details -->
+          <div v-if="selectedReservation" class="mt-6 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-800/50 rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Reservation Details</h3>
+              <button
+                @click="selectedReservation = null"
+                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Guest Name</p>
+                <p class="font-semibold text-gray-900 dark:text-white">{{ selectedReservation.user?.first_name }} {{ selectedReservation.user?.last_name }}</p>
+              </div>
+              <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Email</p>
+                <p class="font-semibold text-gray-900 dark:text-white">{{ selectedReservation.user?.email || selectedReservation.contact_email }}</p>
+              </div>
+              <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Date & Time</p>
+                <p class="font-semibold text-gray-900 dark:text-white">{{ formatReservationDateTime(selectedReservation.reservation_date, selectedReservation.reservation_time) }}</p>
+              </div>
+              <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Party Size</p>
+                <p class="font-semibold text-gray-900 dark:text-white">{{ selectedReservation.party_size }} {{ selectedReservation.party_size === 1 ? 'guest' : 'guests' }}</p>
+              </div>
+              <div v-if="selectedReservation.contact_phone" class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Phone</p>
+                <p class="font-semibold text-gray-900 dark:text-white">{{ selectedReservation.contact_phone }}</p>
+              </div>
+              <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Status</p>
+                <span :class="{
+                  'bg-gradient-to-br from-green-100 to-green-200 text-green-800 dark:from-green-900/50 dark:to-green-800/50 dark:text-green-200': selectedReservation.status === 'confirmed',
+                  'bg-gradient-to-br from-amber-100 to-amber-200 text-amber-800 dark:from-amber-900/50 dark:to-amber-800/50 dark:text-amber-200': selectedReservation.status === 'pending',
+                  'bg-gradient-to-br from-red-100 to-red-200 text-red-800 dark:from-red-900/50 dark:to-red-800/50 dark:text-red-200': selectedReservation.status === 'cancelled'
+                }" class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold capitalize shadow-sm">
+                  {{ selectedReservation.status }}
+                </span>
+              </div>
+              <div v-if="selectedReservation.special_requests" class="md:col-span-2 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Special Requests</p>
+                <p class="font-medium text-gray-900 dark:text-white">{{ selectedReservation.special_requests }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <!-- Reviews Section (non-owner only) -->
+  <div v-if="restaurant && !isOwner" class="mt-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 dark:border-gray-700/20 overflow-hidden">
         <div class="px-8 py-8">
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Reviews & Ratings</h2>
           
@@ -317,8 +449,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import VueCal from 'vue-cal'
+import 'vue-cal/dist/vuecal.css'
 
 const route = useRoute()
 const router = useRouter()
@@ -346,6 +480,52 @@ const filterOptions = [
   { label: 'Lowest', value: 'lowest' }
 ]
 
+// User state
+const user = ref(null)
+const loadingUser = ref(true)
+
+// Reservations state (for owner)
+const reservations = ref([])
+const loadingReservations = ref(false)
+const selectedReservation = ref(null)
+
+// Computed property for calendar events
+const calendarEvents = computed(() => {
+  if (!reservations.value || reservations.value.length === 0) return []
+  
+  return reservations.value.map(reservation => {
+    // Parse the date and time properly
+    const dateStr = reservation.reservation_date
+    const timeStr = reservation.reservation_time
+    
+    // Create date object
+    let startDate
+    if (typeof dateStr === 'string' && typeof timeStr === 'string') {
+      // Handle both "HH:mm" and "HH:mm:ss" formats
+      const timeParts = timeStr.split(':')
+      const hours = parseInt(timeParts[0])
+      const minutes = parseInt(timeParts[1])
+      
+      startDate = new Date(dateStr)
+      startDate.setHours(hours, minutes, 0, 0)
+    } else {
+      startDate = new Date()
+    }
+    
+    // End date is 2 hours after start
+    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000)
+    
+    return {
+      start: startDate,
+      end: endDate,
+      title: `${reservation.user?.first_name || 'Guest'} ${reservation.user?.last_name || ''}`,
+      content: `${reservation.party_size} ${reservation.party_size === 1 ? 'guest' : 'guests'}`,
+      class: `event-${reservation.status || 'confirmed'}`,
+      reservation: reservation
+    }
+  })
+})
+
 // Computed property for filtered reviews
 const filteredReviews = computed(() => {
   let sorted = [...reviews.value]
@@ -364,6 +544,11 @@ const filteredReviews = computed(() => {
   }
 })
 
+// Owner detection
+const isOwner = computed(() => {
+  return user.value && restaurant.value && user.value.id === restaurant.value.owner_id
+})
+
 const fetchRestaurant = async () => {
   const id = route.params.id
   
@@ -377,58 +562,11 @@ const fetchRestaurant = async () => {
   try {
     loading.value = true
     error.value = false
-    
-    // Try to fetch from API first
     const data = await useSanctumFetch(`/api/restaurants/${id}`)
     restaurant.value = data
   } catch (err) {
-    // If API fails, use sample data for demonstration
-    console.warn('API request failed, using sample data:', err)
-    
-    const sampleRestaurants = [
-      { 
-        id: 1, 
-        name: 'La Piazza', 
-        cuisine: 'Italian', 
-        location: 'Center', 
-        description: 'Cozy Italian restaurant with wood-fired pizzas and authentic pasta dishes. Our chefs bring traditional Italian flavors with a modern twist, using fresh ingredients and time-honored recipes.', 
-        rating: 4.6, 
-        open: true, 
-        owner_id: 1,
-        owner: { id: 1, first_name: 'Mario', last_name: 'Rossi', email: 'mario.rossi@lapiazza.com' }
-      },
-      { 
-        id: 2, 
-        name: 'Sushi Hana', 
-        cuisine: 'Japanese', 
-        location: 'Riverside', 
-        description: 'Fresh nigiri and creative rolls in an elegant atmosphere. Experience the art of Japanese cuisine with our expertly crafted sushi, made with the finest fish flown in daily.', 
-        rating: 4.8, 
-        open: false, 
-        owner_id: 2,
-        owner: { id: 2, first_name: 'Hiroshi', last_name: 'Tanaka', email: 'hiroshi.tanaka@sushihana.com' }
-      },
-      { 
-        id: 3, 
-        name: 'Spice Route', 
-        cuisine: 'Indian', 
-        location: 'Old Town', 
-        description: 'Bold flavors and aromatic curries that transport you to the heart of India. Our spice masters create authentic dishes using traditional cooking methods and premium spices.', 
-        rating: 4.5, 
-        open: true, 
-        owner_id: 3,
-        owner: { id: 3, first_name: 'Raj', last_name: 'Patel', email: 'raj.patel@spiceroute.com' }
-      },
-    ]
-    
-    const foundRestaurant = sampleRestaurants.find(r => r.id === parseInt(id))
-    
-    if (foundRestaurant) {
-      restaurant.value = foundRestaurant
-    } else {
-      error.value = true
-      errorMessage.value = 'Restaurant not found'
-    }
+    error.value = true
+    errorMessage.value = err?.message || 'Failed to load restaurant'
   } finally {
     loading.value = false
   }
@@ -444,42 +582,52 @@ const fetchReviews = async () => {
     const data = await useSanctumFetch(`/api/restaurants/${id}/reviews`)
     reviews.value = data || []
   } catch (err) {
-    console.warn('Failed to load reviews:', err)
-    // Sample reviews for testing when API is unavailable
-    const sampleReviews = [
-      {
-        id: 1,
-        rating: 5,
-        comment: 'Amazing food and excellent service! The pasta was perfectly cooked and the atmosphere was cozy.',
-        created_at: '2024-10-05T10:30:00Z',
-        user: { id: 1, first_name: 'John', last_name: 'Doe', email: 'john@example.com' }
-      },
-      {
-        id: 2,
-        rating: 4,
-        comment: 'Great experience overall. The pizza was delicious, though the wait time was a bit long.',
-        created_at: '2024-10-03T15:45:00Z',
-        user: { id: 2, first_name: 'Jane', last_name: 'Smith', email: 'jane@example.com' }
-      },
-      {
-        id: 3,
-        rating: 5,
-        comment: 'Best Italian restaurant in the area! Highly recommend the tiramisu.',
-        created_at: '2024-10-01T19:20:00Z',
-        user: { id: 3, first_name: 'Mike', last_name: 'Johnson', email: 'mike@example.com' }
-      }
-    ]
-    
-    const restaurantId = parseInt(route.params.id)
-    if (restaurantId <= 3) {
-      reviews.value = sampleReviews
-    } else {
-      reviews.value = []
-    }
+    reviews.value = []
   } finally {
     loadingReviews.value = false
   }
 }
+
+// Fetch reservations for restaurant owner
+const fetchReservations = async () => {
+  const id = route.params.id
+  if (!id) return
+
+  try {
+    loadingReservations.value = true
+    const data = await useSanctumFetch(`/api/restaurants/${id}/reservations`)
+    reservations.value = data || []
+  } catch (err) {
+    console.error('Failed to load reservations:', err)
+    reservations.value = []
+  } finally {
+    loadingReservations.value = false
+  }
+}
+
+// Handle calendar event click
+const onEventClick = (event) => {
+  selectedReservation.value = event.reservation
+}
+
+// Format reservation date and time
+const formatReservationDateTime = (date, time) => {
+  if (!date || !time) return ''
+  try {
+    const dateTime = new Date(`${date}T${time}`)
+    return dateTime.toLocaleString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    })
+  } catch {
+    return `${date} ${time}`
+  }
+}
+
 
 // Submit a new review
 const submitReview = async () => {
@@ -511,6 +659,18 @@ const submitReview = async () => {
     reviewErrorMessage.value = err?.data?.message || err?.message || 'Failed to submit review'
   } finally {
     submittingReview.value = false
+  }
+}
+// Fetch current user
+const fetchUser = async () => {
+  try {
+    loadingUser.value = true
+    const data = await useSanctumFetch('/api/user')
+    user.value = data
+  } catch (err) {
+    user.value = null
+  } finally {
+    loadingUser.value = false
   }
 }
 
@@ -546,8 +706,15 @@ const formatReviewDate = (dateString) => {
 }
 
 onMounted(() => {
-  fetchRestaurant()
-  fetchReviews()
+  fetchUser().then(() => {
+    fetchRestaurant().then(() => {
+      if (isOwner.value) {
+        fetchReservations()
+      } else {
+        fetchReviews()
+      }
+    })
+  })
 })
 
 // Set page metadata
@@ -556,14 +723,231 @@ useHead({
 })
 </script>
 
-<style scoped>
-/* Custom animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+<style>
+/* Custom VueCal Styling */
+.vuecal--custom {
+  font-family: inherit;
+  border-radius: 1rem;
+  overflow: hidden;
 }
 
-.restaurant-card {
-  animation: fadeIn 0.6s ease-out;
+/* Calendar Header */
+.vuecal--custom .vuecal__title-bar {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  color: white !important;
+  padding: 1rem !important;
+  border-bottom: none !important;
+}
+
+.vuecal--custom .vuecal__title {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 1.25rem !important;
+}
+
+.vuecal--custom .vuecal__arrow {
+  color: white !important;
+}
+
+.vuecal--custom .vuecal__arrow:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* View buttons */
+.vuecal--custom .vuecal__view-btn {
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.vuecal--custom .vuecal__view-btn--active {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Weekdays header */
+.vuecal--custom .vuecal__weekdays-headings {
+  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%) !important;
+  border-bottom: none !important;
+}
+
+.vuecal--custom .vuecal__heading {
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 0.75rem 0 !important;
+  border: none !important;
+}
+
+/* Calendar body */
+.vuecal--custom .vuecal__body {
+  background: white !important;
+}
+
+/* Cells */
+.vuecal--custom .vuecal__cell {
+  border-color: #e5e7eb !important;
+  transition: all 0.2s ease !important;
+}
+
+.vuecal--custom .vuecal__cell:hover {
+  background: rgba(99, 102, 241, 0.05) !important;
+}
+
+.vuecal--custom .vuecal__cell-content {
+  color: #374151 !important;
+  font-weight: 500 !important;
+}
+
+/* Today's cell */
+.vuecal--custom .vuecal__cell--today {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%) !important;
+}
+
+.vuecal--custom .vuecal__cell--today .vuecal__cell-content {
+  color: #4f46e5 !important;
+  font-weight: 700 !important;
+}
+
+/* Weekend cells */
+.vuecal--custom .vuecal__cell--weekend {
+  background: rgba(249, 250, 251, 0.5) !important;
+}
+
+/* Events */
+.vuecal--custom .vuecal__event {
+  border-radius: 0.5rem !important;
+  border: none !important;
+  font-size: 0.875rem !important;
+  padding: 0.5rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.vuecal--custom .vuecal__event:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Event status colors */
+.vuecal--custom .vuecal__event.event-confirmed {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+  color: white !important;
+}
+
+.vuecal--custom .vuecal__event.event-pending {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+  color: white !important;
+}
+
+.vuecal--custom .vuecal__event.event-cancelled {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+.vuecal--custom .vuecal__event-content {
+  color: inherit !important;
+}
+
+/* Time column (for week/day view) */
+.vuecal--custom .vuecal__time-column {
+  background: #f9fafb !important;
+  border-right: 2px solid #e5e7eb !important;
+}
+
+.vuecal--custom .vuecal__time-cell {
+  color: #6b7280 !important;
+  font-weight: 500 !important;
+}
+
+/* Dark mode styles */
+.dark .vuecal--custom .vuecal__body {
+  background: rgba(31, 41, 55, 0.5) !important;
+}
+
+.dark .vuecal--custom .vuecal__cell {
+  border-color: rgba(75, 85, 99, 0.5) !important;
+}
+
+.dark .vuecal--custom .vuecal__cell:hover {
+  background: rgba(99, 102, 241, 0.1) !important;
+}
+
+.dark .vuecal--custom .vuecal__cell-content {
+  color: #e5e7eb !important;
+}
+
+.dark .vuecal--custom .vuecal__cell--today {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%) !important;
+}
+
+.dark .vuecal--custom .vuecal__cell--today .vuecal__cell-content {
+  color: #a5b4fc !important;
+}
+
+.dark .vuecal--custom .vuecal__cell--weekend {
+  background: rgba(17, 24, 39, 0.5) !important;
+}
+
+.dark .vuecal--custom .vuecal__time-column {
+  background: rgba(17, 24, 39, 0.5) !important;
+  border-right: 2px solid rgba(75, 85, 99, 0.5) !important;
+}
+
+.dark .vuecal--custom .vuecal__time-cell {
+  color: #9ca3af !important;
+}
+
+/* No events message */
+.vuecal--custom .vuecal__no-event {
+  color: #9ca3af !important;
+  font-style: italic !important;
+}
+
+.dark .vuecal--custom .vuecal__no-event {
+  color: #6b7280 !important;
+}
+
+/* All day events */
+.vuecal--custom .vuecal__all-day {
+  background: rgba(249, 250, 251, 0.8) !important;
+  border-bottom: 2px solid #e5e7eb !important;
+}
+
+.dark .vuecal--custom .vuecal__all-day {
+  background: rgba(17, 24, 39, 0.8) !important;
+  border-bottom: 2px solid rgba(75, 85, 99, 0.5) !important;
+}
+
+/* Now indicator */
+.vuecal--custom .vuecal__now-line {
+  color: #ef4444 !important;
+}
+
+/* Scrollbar styling */
+.vuecal--custom ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.vuecal--custom ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.vuecal--custom ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 4px;
+}
+
+.vuecal--custom ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.dark .vuecal--custom ::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.5);
+}
+
+.dark .vuecal--custom ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
 }
 </style>

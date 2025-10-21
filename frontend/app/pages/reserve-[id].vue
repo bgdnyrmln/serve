@@ -102,7 +102,7 @@
                   id="date"
                   :min="minDate"
                   required
-                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700/50 dark:text-white backdrop-blur-sm transition-all duration-200 hover:border-indigo-400 dark:hover:border-indigo-500"
                 />
               </div>
 
@@ -116,7 +116,7 @@
                   type="time"
                   id="time"
                   required
-                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700/50 dark:text-white backdrop-blur-sm transition-all duration-200 hover:border-indigo-400 dark:hover:border-indigo-500"
                 />
               </div>
 
@@ -129,7 +129,7 @@
                   v-model="form.party_size"
                   id="party_size"
                   required
-                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700/50 dark:text-white backdrop-blur-sm transition-all duration-200 hover:border-indigo-400 dark:hover:border-indigo-500"
                 >
                   <option value="">Select party size</option>
                   <option v-for="size in Array.from({length: 20}, (_, i) => i + 1)" :key="size" :value="size">
@@ -147,7 +147,7 @@
                   v-model="form.contact_phone"
                   type="tel"
                   id="phone"
-                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700/50 dark:text-white backdrop-blur-sm transition-all duration-200 hover:border-indigo-400 dark:hover:border-indigo-500"
                   placeholder="Your phone number"
                 />
               </div>
@@ -161,7 +161,7 @@
                   v-model="form.special_requests"
                   id="requests"
                   rows="4"
-                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700/50 dark:text-white backdrop-blur-sm transition-all duration-200 hover:border-indigo-400 dark:hover:border-indigo-500 resize-none"
                   placeholder="Any dietary restrictions, celebrations, or special needs..."
                   maxlength="500"
                 ></textarea>
@@ -172,16 +172,35 @@
               <button
                 type="submit"
                 :disabled="submitting"
-                class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-200 font-medium"
+                class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-xl hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none"
               >
-                <span v-if="submitting">Making Reservation...</span>
-                <span v-else>Make Reservation</span>
+                <span v-if="submitting" class="flex items-center justify-center">
+                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Making Reservation...
+                </span>
+                <span v-else class="flex items-center justify-center">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  Confirm Reservation
+                </span>
               </button>
             </form>
 
             <!-- Success/Error Messages -->
-            <div v-if="message" class="mt-6 p-4 rounded-lg" :class="messageType === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'">
-              {{ message }}
+            <div v-if="message" class="mt-6 p-4 rounded-xl backdrop-blur-sm border" :class="messageType === 'success' ? 'bg-green-100/80 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' : 'bg-red-100/80 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'">
+              <div class="flex items-start">
+                <svg v-if="messageType === 'success'" class="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <svg v-else class="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <p>{{ message }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -290,7 +309,8 @@ const submitReservation = async () => {
 
     // Redirect to reservations page after 3 seconds
     setTimeout(() => {
-      router.push('/reservations')
+      // If owner is viewing their restaurant page, reload it to show new reservation
+      window.location.href = `/restaurant/${reservationData.restaurant_id}`
     }, 3000)
 
   } catch (error: any) {
@@ -319,3 +339,99 @@ useHead({
   title: () => restaurant.value ? `Make Reservation - ${restaurant.value.name}` : 'Make Reservation'
 })
 </script>
+
+<style scoped>
+/* Custom styling for date and time inputs to match theme */
+input[type="date"],
+input[type="time"] {
+  position: relative;
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  transition: all 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+/* Dark mode calendar picker */
+.dark input[type="date"]::-webkit-calendar-picker-indicator,
+.dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* Focus ring styling */
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Smooth animations */
+button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0) !important;
+}
+
+/* Gradient animation on button hover */
+button:not(:disabled):hover {
+  background-size: 150% 150%;
+}
+
+/* Select dropdown arrow styling */
+select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  appearance: none;
+}
+
+.dark select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* Placeholder styling */
+::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+.dark ::placeholder {
+  color: #6b7280;
+}
+
+/* Animation for success/error messages */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+div[class*="bg-green-100"],
+div[class*="bg-red-100"] {
+  animation: slideIn 0.3s ease-out;
+}
+</style>

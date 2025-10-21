@@ -107,8 +107,7 @@ const submitForm = async () => {
       },
     });
 
-    // Redirect to main page on success
-    router.push('/');
+  window.location.href = '/';
   } catch (err) {
     // Handle validation or server errors
     console.error("Login error:", err);

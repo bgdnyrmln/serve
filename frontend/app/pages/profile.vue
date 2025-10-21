@@ -121,6 +121,7 @@ onMounted(async () => {
     console.error('Failed to fetch user:', err);
     error.value = true;
     errorMessage.value = err.message || 'Unable to load profile';
+    window.location.href = '/';
   } finally {
     loading.value = false;
   }

@@ -290,7 +290,8 @@ const submitReservation = async () => {
 
     // Redirect to reservations page after 3 seconds
     setTimeout(() => {
-      router.push('/reservations')
+      // If owner is viewing their restaurant page, reload it to show new reservation
+      window.location.href = `/restaurant/${reservationData.restaurant_id}`
     }, 3000)
 
   } catch (error: any) {
