@@ -39,6 +39,7 @@ Route::get('/user', function (Request $request) {
     // Reviews
     Route::get('/restaurants/{restaurant}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'index']);
     Route::post('/restaurants/{restaurant}/reviews', [App\Http\Controllers\Api\ReviewController::class, 'store'])->middleware('auth:sanctum');
+    Route::get('/restaurants/{restaurant}/reviews/eligibility', [App\Http\Controllers\Api\ReviewController::class, 'eligibility'])->middleware('auth:sanctum');
 
     // Reservations
     Route::get('/restaurants/{restaurant}/available-slots', [App\Http\Controllers\ReservationController::class, 'availableTimeSlots']);
